@@ -396,6 +396,9 @@ public class Chess implements Movable{
                 if((endP.getY() == 3 || endP.getY() == 5) && endP.getX() == 2){
                     return true;
                 }
+                //右边一个
+                if(endP.getX() == 2 && endP.getY() == 4)
+                    return true;
             }
             //第四行 第二列第四列
             if(startP.getX() == 2 || startP.getX() == 4){
@@ -411,6 +414,10 @@ public class Chess implements Movable{
                 if((endP.getY() == 3 || endP.getY() == 5) && endP.getX() == 4){
                     return true;
                 }
+                //左边一个
+                if(endP.getX() == 4 && endP.getY() == 4)
+                    return true;
+
             }
         }
         //第十一行不带行营
@@ -425,6 +432,9 @@ public class Chess implements Movable{
                 if((endP.getY() == 10 || endP.getY() == 12) && endP.getX() == 2){
                     return true;
                 }
+                //右边一个
+                if(endP.getX() == 2 && endP.getY() == 11)
+                    return true;
             }
             //第十一行 第二列第四列
             if(startP.getX() == 2 || startP.getX() == 4){
@@ -440,6 +450,9 @@ public class Chess implements Movable{
                 if((endP.getY() == 10 || endP.getY() == 12) && endP.getX() == 4){
                     return true;
                 }
+                //左边一个
+                if(endP.getX() == 4 && endP.getY() == 11)
+                    return true;
             }
         }
 

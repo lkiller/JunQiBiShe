@@ -164,15 +164,17 @@ public class GongBing extends Chess implements Movable {
             }
 
             //第四行
-            if(startP.getY() == 3){
+            if(startP.getY() == 4){
                 if(startP.getX() == 1){
-                    if((endP.getX() == 2 && endP.getY() == 3) || (endP.getX() == 2 && endP.getY() == 5)){
+                    if((endP.getX() == 2 && endP.getY() == 3) || (endP.getX() == 2 && endP.getY() == 5)
+                ||(endP.getX() == 2 && endP.getY() == 4)){
                         return true;
                     }
                     else return isAtRail(endP);
                 }
                 if(startP.getX() == 5){
-                    if((endP.getX() == 4 && endP.getY() ==3) || (endP.getX() == 4 && endP.getY() == 5)){
+                    if((endP.getX() == 4 && endP.getY() ==3) || (endP.getX() == 4 && endP.getY() == 5)
+                    ||(endP.getX() == 4 && endP.getY() ==4)){
                         return true;
                     }
                     else return isAtRail(endP);
@@ -181,13 +183,15 @@ public class GongBing extends Chess implements Movable {
             //第十一行
             if(startP.getY() == 11){
                 if(startP.getX() == 1){
-                    if((endP.getX() == 2 && endP.getY() == 10) || (endP.getX() == 2 && endP.getY() == 12)){
+                    if((endP.getX() == 2 && endP.getY() == 10) || (endP.getX() == 2 && endP.getY() == 12) ||
+                            (endP.getX() == 2 && endP.getY() == 11)){
                         return true;
                     }
                     else return isAtRail(endP);
                 }
                 if(startP.getX() == 5){
-                    if((endP.getX() == 4 && endP.getY() == 10) || (endP.getX() == 4 && endP.getY() == 12)){
+                    if((endP.getX() == 4 && endP.getY() == 10) || (endP.getX() == 4 && endP.getY() == 12) ||
+                            (endP.getX() == 4 && endP.getY() ==11)){
                         return true;
                     }
                     else return isAtRail(endP);

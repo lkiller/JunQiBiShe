@@ -29,6 +29,7 @@ public class MyPanel extends JPanel {
     boolean RedDiLeiIsOver = false;
     boolean BlueDiLeiIsOver = false;
     boolean isInited = false;
+    boolean cancelSelect = false;
     @Override
     public void paint(Graphics g) {
         super.paint(g);
@@ -42,10 +43,14 @@ public class MyPanel extends JPanel {
             drawChess(g);
         }
         isInited = true;
+        //取消选择
+        if(cancelSelect){
+            cancelSelect = false;
+            c1.draw(g, this);
+        }
         if(selectedChess != null){
             selectedChess.drawMargin(g);
         }
-
     }
     public MyPanel(){
         createChess();
@@ -245,14 +250,15 @@ public class MyPanel extends JPanel {
         //第n次点击棋盘
         else{
             c1 = Chess.getChessByPoint(p, chessList);
-            if(c1 != null && !c1.isShow()){
-                selectedChess.setShow(true);
-                //翻开过后换玩家
-                culPlayer = changePlayer(culPlayer);
-                System.out.println("该" + culPlayer.getColor() +  "玩家走了" );
-                System.out.println(culPlayer.getColor() + "方翻开了" + selectedChess.getColor() + selectedChess.getName());
+            //两次选择同一个棋子，表示取消选择
+            if(c1 == selectedChess){
+                selectedChess = null;
+                cancelSelect = true;
+                System.out.println("取消选择");
             }
-            if(selectedChess.isAbleMove(selectedChess.getP(), p) && selectedChess.hasNoOtherChess(selectedChess.getP(), p, MyPanel.this)){
+            else if(c1 != null && !c1.isShow()){
+                System.out.println("选中棋子情况下不可以翻开棋子！请取消选择或走棋！");
+            }else if(selectedChess.isAbleMove(selectedChess.getP(), p) && selectedChess.hasNoOtherChess(selectedChess.getP(), p, MyPanel.this)){
                 System.out.println("起始位置(" + selectedChess.getP().getX() + "," + selectedChess.getP().getY() + ")到(" +
                         p.getX() + "," + p.getY() + ")");
             }else if(c1 != selectedChess){
@@ -278,8 +284,10 @@ public class MyPanel extends JPanel {
                     selectedChess = c1;
                     System.out.println("切换一个棋子\n");
                 }
-                //两次选择不同阵营，则吃子，下面是吃子的一系列判断
-                else if(!selectedChess.getColor().equals(c1.getColor())) {
+                //两次选择不同阵营，且路上没有遮挡能移动，则吃子，下面是吃子的一系列判断
+                else if(!selectedChess.getColor().equals(c1.getColor()) &&
+                        selectedChess.isAbleMove(selectedChess.getP(), p) &&
+                        selectedChess.hasNoOtherChess(selectedChess.getP(), p, MyPanel.this)) {
                     if(!c1.isShow()){//如果c1还未翻开
                         System.out.println("不能吃未翻开的棋子！请重新选择！");
                     }else{
@@ -361,8 +369,7 @@ public class MyPanel extends JPanel {
                                 selectedChess.setP(p);
                             }
                             culPlayer = changePlayer(culPlayer);
-                            System.out.println("该" + culPlayer.getColor() +  "玩家走了" );
-                            System.out.println(" ");
+                            System.out.println("该" + culPlayer.getColor() +  "玩家走了\n" );
                         }
                     }
                 }
