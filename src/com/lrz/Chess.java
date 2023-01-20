@@ -13,9 +13,9 @@ import java.util.ArrayList;
 public class Chess implements Movable{
     private static final int SIZEX = 100;
     private static final int SIZEY = 50;
-    private static final int MARGIN = 40;//边距
+    private static final int MARGIN = 45;//边距
     private static final int SPACEX = 145;//X轴间距
-    private static final int SPACEY = 70;//Y轴间距
+    private static final int SPACEY = 69;//Y轴间距
     private String name;//名称
     private int level;//棋子大小
     private String color;//阵营

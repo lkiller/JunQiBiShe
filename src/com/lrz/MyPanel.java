@@ -241,7 +241,7 @@ public class MyPanel extends JPanel {
                 selectedChess.setShow(true);
                 //翻开过后换玩家
                 culPlayer = changePlayer(culPlayer);
-                System.out.println("该" + culPlayer.getColor() +  "玩家走了" );
+                System.out.println("该" + culPlayer.getColor() +  "玩家走了\n" );
             }else if(selectedChess.isShow() && !selectedChess.getColor().equals(culPlayer.getColor())){
                 System.out.println("请重新选择自己方的棋子！\n" );
                 selectedChess = null;
@@ -261,14 +261,14 @@ public class MyPanel extends JPanel {
             }else if(selectedChess.isAbleMove(selectedChess.getP(), p) && selectedChess.hasNoOtherChess(selectedChess.getP(), p, MyPanel.this)){
                 System.out.println("起始位置(" + selectedChess.getP().getX() + "," + selectedChess.getP().getY() + ")到(" +
                         p.getX() + "," + p.getY() + ")");
-            }else if(c1 != selectedChess){
+            }/*else if(c1 != selectedChess){
                 System.out.println("起始位置(" + selectedChess.getP().getX() + "," + selectedChess.getP().getY() + ")到(" +
                         p.getX() + "," + p.getY() + ")");
                 System.out.print("不可以移动");
                 if(selectedChess.isAbleMove(selectedChess.getP(), p)){
                     System.out.print("，原因是路线中有棋子遮挡\n");
                 }
-            }
+            }*/
             //如果点击的位置是空  并且   可以移动  并且  移动的路上没有其他棋子遮挡
             if(c1 == null && selectedChess.isAbleMove(selectedChess.getP(), p)
                     && selectedChess.hasNoOtherChess(selectedChess.getP(), p, MyPanel.this)){
@@ -370,6 +370,8 @@ public class MyPanel extends JPanel {
                             }
                             culPlayer = changePlayer(culPlayer);
                             System.out.println("该" + culPlayer.getColor() +  "玩家走了\n" );
+                        }else if(selectedChess.getLevel() < eated.getLevel()){
+                            System.out.println("不可吃，等级没被吃的大！\n");
                         }
                     }
                 }
@@ -416,7 +418,7 @@ public class MyPanel extends JPanel {
                 repaint();
             }
             //第n次点
-            else {
+            else if(culChess != null && !chessByPoint.isShow()){
                 //如果第n次和上一次点的颜色不同
                 if (!culChess.getColor().equals(chessByPoint.getColor())) {
                     System.out.println("点击的棋子是" + chessByPoint.getColor() + chessByPoint.getName());
@@ -438,6 +440,9 @@ public class MyPanel extends JPanel {
                     culChess = null;
                     repaint();
                 }
+            }
+            else{
+                System.out.println("请点击未翻开的棋子\n");
             }
         }
     }

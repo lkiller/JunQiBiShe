@@ -117,19 +117,22 @@ public class ALGraph {
         for (int i = 0; i < vertics.length; i++) {
             if(vertics[i] != null){
                 temp = vertics[i].first;
-                if(temp.id == num){//第一个就是要删除的
-                    vertics[i].first = temp.next;
-                }else if(temp.next != null){//第二个以及之后的才是要删除的
-                    pTemp = vertics[i].first;
-                    temp = temp.next;
-                    while(temp.id != num && temp.next != null){
-                        pTemp = temp;
+                if(temp != null){
+                    if(temp.id == num){//第一个就是要删除的
+                        vertics[i].first = temp.next;
+                    }else if(temp.next != null){//第二个以及之后的才是要删除的
+                        pTemp = vertics[i].first;
                         temp = temp.next;
-                    }
-                    if(temp.id == num){
-                        pTemp.next = temp.next;
+                        while(temp.id != num && temp.next != null){
+                            pTemp = temp;
+                            temp = temp.next;
+                        }
+                        if(temp.id == num){
+                            pTemp.next = temp.next;
+                        }
                     }
                 }
+
             }
 
         }
@@ -200,12 +203,13 @@ public class ALGraph {
     public void test(){
         Init();//初始化图
         //printGraph();
-        delete(2);
+        /*delete(2);
         delete(16);
 
         System.out.println(isExist(this, 0,31));
         delete(21);
-        System.out.println(isExist(this, 0,31));
+        System.out.println(isExist(this, 0,31));*/
+        System.out.println(vertics[9].first.id);
     }
 }
 

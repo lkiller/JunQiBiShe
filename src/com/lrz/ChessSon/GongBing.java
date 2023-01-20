@@ -84,7 +84,7 @@ public class GongBing extends Chess implements Movable {
                         return true;
                     return isAtRail(endP);
                 }
-                //第二行第四个
+                //第二行第五个
                 if (startP.getX() == 5) {
                     //目标行营或者5、1
                     if ((endP.getX() == 4 && endP.getY() == 3) || (endP.getX() == 5 && endP.getY() == 1))
@@ -339,122 +339,150 @@ public class GongBing extends Chess implements Movable {
     @Override
     public boolean hasNoOtherChess(Point startP, Point endP, MyPanel myPanel) {
         //到工兵走时，每次都会根据场上棋子创建一个图，
-        // 然后根据起始点和结束点判断是否能够移动
-        createGraph(myPanel);
+        // 然后根据起始点和结束点判断是否能够移动，移除起始点创建图
+        createGraph(myPanel, startP);
         int A = 0, B = 0;
-        //替换A
-        {
-            if(startP.x == 1){
-            if(startP.y == 2) A = 0;
-            if(startP.y == 3) A = 15;
-            if(startP.y == 4) A = 14;
-            if(startP.y == 5) A = 13;
-            if(startP.y == 6) A = 12;
-            //if(p.y == 7) A =13);
-            //if(p.y == 8) A =13);
-            if(startP.y == 9) A = 16;
-            if(startP.y == 10) A = 31;
-            if(startP.y == 11) A = 30;
-            if(startP.y == 12) A = 29;
-            if(startP.y == 13) A = 28;
+        if(startP.y == 1 || startP.y == 14) return true;
+        if(startP.y == 3){
+            if(startP.x == 2 || startP.x == 3 || startP.x == 4) return true;
         }
-        if(startP.x == 2){
-            if(startP.y == 2) A = 1;
-            if(startP.y == 6) A = 11;
-            if(startP.y == 9) A = 17;
-            if(startP.y == 13) A = 27;
+        if(startP.y == 4){
+            if(startP.x == 2 || startP.x == 3 || startP.x == 4) return true;
         }
-        if(startP.x == 3){
-            if(startP.y == 2) A = 2;
-            if(startP.y == 6) A = 10;
-            if(startP.y == 9) A = 18;
-            if(startP.y == 13) A = 26;
+        if(startP.y == 5){
+            if(startP.x == 2 || startP.x == 3 || startP.x == 4) return true;
         }
-        if(startP.x == 4){
-            if(startP.y == 2) A = 3;
-            if(startP.y == 6) A = 9;
-            if(startP.y == 9) A = 19;
-            if(startP.y == 13) A = 25;
+        if(startP.y == 10){
+            if(startP.x == 2 || startP.x == 3 || startP.x == 4) return true;
         }
-        if(startP.x == 5){
-            if(startP.y == 2) A = 4;
-            if(startP.y == 3) A = 5;
-            if(startP.y == 4) A = 6;
-            if(startP.y == 5) A = 7;
-            if(startP.y == 6) A = 8;
-            //if(p.y == 7) A =13);
-            //if(p.y == 8) A =13);
-            if(startP.y == 9) A = 20;
-            if(startP.y == 10) A = 21;
-            if(startP.y == 11) A = 22;
-            if(startP.y == 12) A = 23;
-            if(startP.y == 13) A = 24;
+        if(startP.y == 11){
+            if(startP.x == 2 || startP.x == 3 || startP.x == 4) return true;
         }
+        if(startP.y == 12){
+            if(startP.x == 2 || startP.x == 3 || startP.x == 4) return true;
         }
-        //替换B
-        {
-            if (endP.x == 1) {
-                if (endP.y == 2) B = 0;
-                if (endP.y == 3) B = 15;
-                if (endP.y == 4) B = 14;
-                if (endP.y == 5) B = 13;
-                if (endP.y == 6) B = 12;
-                //if(p.y == 7) B =13);
-                //if(p.y == 8) B =13);
-                if (endP.y == 9) B = 16;
-                if (endP.y == 10) B = 31;
-                if (endP.y == 11) B = 30;
-                if (endP.y == 12) B = 29;
-                if (endP.y == 13) B = 28;
+        else   {
+            //替换A
+            {
+             if(startP.x == 1){
+                    if(startP.y == 2) A = 0;
+                    if(startP.y == 3) A = 15;
+                    if(startP.y == 4) A = 14;
+                    if(startP.y == 5) A = 13;
+                    if(startP.y == 6) A = 12;
+                    //if(p.y == 7) A =13);
+                    //if(p.y == 8) A =13);
+                    if(startP.y == 9) A = 16;
+                    if(startP.y == 10) A = 31;
+                    if(startP.y == 11) A = 30;
+                    if(startP.y == 12) A = 29;
+                    if(startP.y == 13) A = 28;
+                }
+                if(startP.x == 2){
+                    if(startP.y == 2) A = 1;
+                    if(startP.y == 6) A = 11;
+                    if(startP.y == 9) A = 17;
+                    if(startP.y == 13) A = 27;
+                }
+                if(startP.x == 3){
+                    if(startP.y == 2) A = 2;
+                    if(startP.y == 6) A = 10;
+                    if(startP.y == 9) A = 18;
+                    if(startP.y == 13) A = 26;
+                }
+                if(startP.x == 4){
+                    if(startP.y == 2) A = 3;
+                    if(startP.y == 6) A = 9;
+                    if(startP.y == 9) A = 19;
+                    if(startP.y == 13) A = 25;
+                }
+                if(startP.x == 5){
+                    if(startP.y == 2) A = 4;
+                    if(startP.y == 3) A = 5;
+                    if(startP.y == 4) A = 6;
+                    if(startP.y == 5) A = 7;
+                    if(startP.y == 6) A = 8;
+                    //if(p.y == 7) A =13);
+                    //if(p.y == 8) A =13);
+                    if(startP.y == 9) A = 20;
+                    if(startP.y == 10) A = 21;
+                    if(startP.y == 11) A = 22;
+                    if(startP.y == 12) A = 23;
+                    if(startP.y == 13) A = 24;
+                }
             }
-            if (endP.x == 2) {
-                if (endP.y == 2) B = 1;
-                if (endP.y == 6) B = 11;
-                if (endP.y == 9) B = 17;
-                if (endP.y == 13) B = 27;
+            //替换B
+            {
+                if (endP.x == 1) {
+                    if (endP.y == 2) B = 0;
+                    if (endP.y == 3) B = 15;
+                    if (endP.y == 4) B = 14;
+                    if (endP.y == 5) B = 13;
+                    if (endP.y == 6) B = 12;
+                    //if(p.y == 7) B =13);
+                    //if(p.y == 8) B =13);
+                    if (endP.y == 9) B = 16;
+                    if (endP.y == 10) B = 31;
+                    if (endP.y == 11) B = 30;
+                    if (endP.y == 12) B = 29;
+                    if (endP.y == 13) B = 28;
+                }
+                if (endP.x == 2) {
+                    if (endP.y == 2) B = 1;
+                    if (endP.y == 6) B = 11;
+                    if (endP.y == 9) B = 17;
+                    if (endP.y == 13) B = 27;
+                }
+                if (endP.x == 3) {
+                    if (endP.y == 2) B = 2;
+                    if (endP.y == 6) B = 10;
+                    if (endP.y == 9) B = 18;
+                    if (endP.y == 13) B = 26;
+                }
+                if (endP.x == 4) {
+                    if (endP.y == 2) B = 3;
+                    if (endP.y == 6) B = 9;
+                    if (endP.y == 9) B = 19;
+                    if (endP.y == 13) B = 25;
+                }
+                if (endP.x == 5) {
+                    if (endP.y == 2) B = 4;
+                    if (endP.y == 3) B = 5;
+                    if (endP.y == 4) B = 6;
+                    if (endP.y == 5) B = 7;
+                    if (endP.y == 6) B = 8;
+                    //if(p.y == 7) B =13);
+                    //if(p.y == 8) B =13);
+                    if (endP.y == 9) B = 20;
+                    if (endP.y == 10) B = 21;
+                    if (endP.y == 11) B = 22;
+                    if (endP.y == 12) B = 23;
+                    if (endP.y == 13) B = 24;
+                }
             }
-            if (endP.x == 3) {
-                if (endP.y == 2) B = 2;
-                if (endP.y == 6) B = 10;
-                if (endP.y == 9) B = 18;
-                if (endP.y == 13) B = 26;
-            }
-            if (endP.x == 4) {
-                if (endP.y == 2) B = 3;
-                if (endP.y == 6) B = 9;
-                if (endP.y == 9) B = 19;
-                if (endP.y == 13) B = 25;
-            }
-            if (endP.x == 5) {
-                if (endP.y == 2) B = 4;
-                if (endP.y == 3) B = 5;
-                if (endP.y == 4) B = 6;
-                if (endP.y == 5) B = 7;
-                if (endP.y == 6) B = 8;
-                //if(p.y == 7) B =13);
-                //if(p.y == 8) B =13);
-                if (endP.y == 9) B = 20;
-                if (endP.y == 10) B = 21;
-                if (endP.y == 11) B = 22;
-                if (endP.y == 12) B = 23;
-                if (endP.y == 13) B = 24;
+            if(isAtRail(startP) && isAtRail(endP)){
+                return alGraph.isExist(alGraph, A, B);
+            }else{
+                return true;
             }
         }
-        return alGraph.isExist(alGraph, A, B);
+        return true;
     }
 
     /**
      * 根据场上棋子创建图
      * @param myPanel
      */
-    public void createGraph(MyPanel myPanel){
+    public void createGraph(MyPanel myPanel, Point startP){
         alGraph = new ALGraph();
         alGraph.Init();//初始化图
+
         Point p;
         ArrayList<Chess> chessList = myPanel.chessList;
         for (Chess chess : chessList) {
             p = chess.getP();
-            if(isAtRail(p)){
+            //不删除本身的点，否则报空指针异常？找了好久的bug
+            if(isAtRail(p) && (p.x != startP.x && p.y != startP.y)){
                 deletePoint(p, alGraph);
             }
         }
