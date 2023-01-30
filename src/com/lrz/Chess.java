@@ -242,6 +242,9 @@ public class Chess implements Movable{
                 if ((endP.getY() == 3 && endP.getX() == 2) || (endP.getY() == 3 && endP.getX() == 4)) {
                     return true;
                 }
+                if(endP.getY() == 2){
+                    return true;
+                }
             }
             //第二行第五个
             else if (startP.getX() == 5) {
@@ -306,6 +309,9 @@ public class Chess implements Movable{
                 if (Math.abs(startP.getX() - endP.getX()) + Math.abs(startP.getY() - endP.getY()) == 1)
                     return true;
                 if ((endP.getY() == 12 && endP.getX() == 2) || (endP.getY() == 12 && endP.getX() == 4)) {
+                    return true;
+                }
+                if(endP.getY() == 13){
                     return true;
                 }
             }

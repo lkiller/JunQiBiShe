@@ -94,7 +94,7 @@ public class MyPanel extends JPanel {
             chessList.add(new DiLei("地雷", "红"));
             chessList.add(new ZhaDan("炸弹", "红"));
             chessList.add(new ZhaDan("炸弹", "红"));
-            chessList.add(new JunZhang("军旗", "红"));
+            chessList.add(new JunQi("军旗", "红"));
             chessList.add(new Siling("司令", "蓝"));
             chessList.add(new JunZhang("军长", "蓝"));
             chessList.add(new ShiZhang("师长", "蓝"));
@@ -328,7 +328,7 @@ public class MyPanel extends JPanel {
                             System.out.println("该" + culPlayer.getColor() +  "玩家走了\n" );
                         }
                         //如果是炸弹，则同归于尽，军旗除外  ||  如果被吃棋子是炸弹，则两边都死
-                        else if((selectedChess.getLevel() == 10 && eated.getLevel() != -1 )
+                        else if((selectedChess.getLevel() == 10 && eated.getLevel() != -1 && !Chess.isAtXingYing(eated))
                                 || (eated.getLevel() == 10 && !Chess.isAtXingYing(eated)) ){
                             System.out.println("是否在行营中" + Chess.isAtXingYing(eated));
                             boolean remove1 = chessList.remove(eated);
@@ -359,7 +359,7 @@ public class MyPanel extends JPanel {
                             System.out.println("被吃棋子在行营中，不可吃");
                         }
                         //如果等级比被吃大且被吃棋子不在行营中
-                        else if((selectedChess.getLevel() > eated.getLevel()) && !Chess.isAtXingYing(eated)){
+                        else if((selectedChess.getLevel() > eated.getLevel()) && !Chess.isAtXingYing(eated) && eated.getLevel()!= -1){
                             boolean remove = chessList.remove(eated);
                             //移除失败打印
                             if(!remove){
