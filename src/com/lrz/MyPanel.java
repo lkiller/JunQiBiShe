@@ -56,7 +56,7 @@ public class MyPanel extends JPanel {
         createChess();
         addMouseListener(new MouseAdapter() {
             @Override
-            public void mouseClicked(MouseEvent e) {
+            public void mousePressed(MouseEvent e) {
                 if(player1.isDefine() && player2.isDefine()){
                     GuiZe(e);
                 }else{
@@ -235,7 +235,7 @@ public class MyPanel extends JPanel {
             }
             //当前棋子已经翻开并且当前玩家阵营与当前选择棋子是同一个阵营
             else if(selectedChess.isShow() && selectedChess.getColor().equals(culPlayer.getColor())){
-                System.out.println( culPlayer.getColor() + "方第一次选择棋子");
+                System.out.println(culPlayer.getColor() + "方第一次选择棋子");
             }else if(!selectedChess.isShow()){//未翻开
                 System.out.println(culPlayer.getColor() + "方翻开了" + selectedChess.getColor() + selectedChess.getName());
                 selectedChess.setShow(true);
@@ -261,15 +261,8 @@ public class MyPanel extends JPanel {
             }else if(selectedChess.isAbleMove(selectedChess.getP(), p) && selectedChess.hasNoOtherChess(selectedChess.getP(), p, MyPanel.this)){
                 System.out.println("起始位置(" + selectedChess.getP().getX() + "," + selectedChess.getP().getY() + ")到(" +
                         p.getX() + "," + p.getY() + ")");
-            }/*else if(c1 != selectedChess){
-                System.out.println("起始位置(" + selectedChess.getP().getX() + "," + selectedChess.getP().getY() + ")到(" +
-                        p.getX() + "," + p.getY() + ")");
-                System.out.print("不可以移动");
-                if(selectedChess.isAbleMove(selectedChess.getP(), p)){
-                    System.out.print("，原因是路线中有棋子遮挡\n");
-                }
-            }*/
-            //如果点击的位置是空  并且   可以移动  并且  移动的路上没有其他棋子遮挡
+            }
+            //如果点击的位置是空的  并且   可以移动  并且  移动的路上没有其他棋子遮挡
             if(c1 == null && selectedChess.isAbleMove(selectedChess.getP(), p)
                     && selectedChess.hasNoOtherChess(selectedChess.getP(), p, MyPanel.this)){
                 selectedChess.setP(p);
@@ -279,6 +272,9 @@ public class MyPanel extends JPanel {
                 System.out.println("该" + culPlayer.getColor() +  "玩家走了\n" );
             }
             else try{
+                if(selectedChess!= null && !selectedChess.isAbleMove(selectedChess.getP(), p)){
+                System.out.println("无法移动");
+                }
                 //两次选择同一种阵营，即重新选择
                 if(selectedChess.getColor().equals(c1.getColor()) && c1.isShow()) {
                     selectedChess = c1;
@@ -359,7 +355,8 @@ public class MyPanel extends JPanel {
                             System.out.println("被吃棋子在行营中，不可吃");
                         }
                         //如果等级比被吃大且被吃棋子不在行营中
-                        else if((selectedChess.getLevel() > eated.getLevel()) && !Chess.isAtXingYing(eated) && eated.getLevel()!= -1){
+                        else if((selectedChess.getLevel() > eated.getLevel()) && !Chess.isAtXingYing(eated) && eated.getLevel()!= -1 &&
+                                eated.getLevel()!= 0){
                             boolean remove = chessList.remove(eated);
                             //移除失败打印
                             if(!remove){
@@ -370,7 +367,8 @@ public class MyPanel extends JPanel {
                             }
                             culPlayer = changePlayer(culPlayer);
                             System.out.println("该" + culPlayer.getColor() +  "玩家走了\n" );
-                        }else if(selectedChess.getLevel() < eated.getLevel()){
+                        }
+                        else if(selectedChess.getLevel() < eated.getLevel()){
                             System.out.println("不可吃，等级没被吃的大！\n");
                         }
                     }

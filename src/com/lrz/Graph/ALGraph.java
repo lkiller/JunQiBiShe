@@ -106,6 +106,7 @@ public class ALGraph {
         nowNum--;
         deleteVNode(num);
         deleteArcNode(num);
+        System.out.println("AlGraph类第109行，删除了节点" + num);
     }
 
     /**

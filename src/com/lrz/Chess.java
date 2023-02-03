@@ -4,6 +4,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Map;
 
 /**
  * @version 1.0
@@ -167,7 +168,10 @@ public class Chess implements Movable{
      * @return
      */
     public static boolean xingYing(Point startP, Point endP){
-        return Math.abs(startP.getX() - endP.getX()) == 1 || Math.abs(startP.getY() - endP.getY() ) == 1;
+        if(Math.abs(startP.getX() - endP.getX()) == 1 && Math.abs(startP.getY() - endP.getY())== 0) return true;
+        if(Math.abs(startP.getX() - endP.getX()) == 0 && Math.abs(startP.getY() - endP.getY())== 1) return true;
+        if(Math.abs(startP.getX() - endP.getX()) == 1 && Math.abs(startP.getY() - endP.getY())== 1)return true;
+        return false;
     }
 
     /**
@@ -380,8 +384,8 @@ public class Chess implements Movable{
             }
             //第十二行第五列
             if(startP.getX() == 5){
-                if((endP.getX() == 1 && endP.getY() <= 6 && endP.getY() >= 2) ||
-                        (endP.getX() == 1 && endP.getY() <= 13 && endP.getY() >= 9)){
+                if((endP.getX() == 5 && endP.getY() <= 6 && endP.getY() >= 2) ||
+                        (endP.getX() == 5 && endP.getY() <= 13 && endP.getY() >= 9)){
                     return true;
                 }
                 if(endP.getY() == 12 && endP.getX() == 4){
@@ -557,8 +561,11 @@ public class Chess implements Movable{
                 if(endP.getY() == 6 && (endP.getX() == 1 || endP.getX() == 2 || endP.getX() == 4 ||endP.getX() == 5)){
                     return true;
                 }
-                //可向上
+                //可向上向下
                 if(endP.getY() == 9 && endP.getX() == 3){
+                    return true;
+                }
+                if(endP.getY() == 5 && endP.getX() == 3){
                     return true;
                 }
             }
@@ -631,11 +638,14 @@ public class Chess implements Movable{
                 if(endP.getY() == 6 && endP.getX() == 3){
                     return true;
                 }
+                if(endP.getY() == 10 && endP.getX() == 3){
+                    return true;
+                }
             }
             //第九行第四列{
             if(startP.getX() == 4){
                 //可进行营和右边一个
-                if((endP.getX() == 4 && endP.getY() == 10) || (endP.getX() == 5 && endP.getY() == 10)){
+                if((endP.getX() == 4 && endP.getY() == 10) || (endP.getX() == 5 && endP.getY() == 9)){
                     return true;
                 }
                 //可向左三个

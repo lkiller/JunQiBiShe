@@ -322,9 +322,7 @@ public class GongBing extends Chess implements Movable {
             return true;
         }
         //目标在第一列 第二到第六行 第九到第十三行表示都在铁路上
-        if (endP.getX() == 1 && ((endP.getY() <= 6 && endP.getY() >= 2)
-                ||
-                (endP.getY() >= 9 && endP.getY() <= 13))) {
+        if (endP.getX() == 1 && ((endP.getY() <= 6 && endP.getY() >= 2) || (endP.getY() >= 9 && endP.getY() <= 13))) {
             return true;
         }
         //目标在第五列 第二到第六行 第九到第十三行表示都在铁路上
@@ -340,7 +338,7 @@ public class GongBing extends Chess implements Movable {
     public boolean hasNoOtherChess(Point startP, Point endP, MyPanel myPanel) {
         //到工兵走时，每次都会根据场上棋子创建一个图，
         // 然后根据起始点和结束点判断是否能够移动，移除起始点创建图
-        createGraph(myPanel, startP);
+        createGraph(myPanel, startP, endP);
         int A = 0, B = 0;
         if(startP.y == 1 || startP.y == 14) return true;
         if(startP.y == 3){
@@ -462,18 +460,18 @@ public class GongBing extends Chess implements Movable {
             }
             if(isAtRail(startP) && isAtRail(endP)){
                 return alGraph.isExist(alGraph, A, B);
-            }else{
+            }else if(isAtRail(startP) && !isAtRail(endP)){
                 return true;
             }
         }
-        return true;
+        return false;
     }
 
     /**
      * 根据场上棋子创建图
      * @param myPanel
      */
-    public void createGraph(MyPanel myPanel, Point startP){
+    public void createGraph(MyPanel myPanel, Point startP, Point endP){
         alGraph = new ALGraph();
         alGraph.Init();//初始化图
 
@@ -482,10 +480,15 @@ public class GongBing extends Chess implements Movable {
         for (Chess chess : chessList) {
             p = chess.getP();
             //不删除本身的点，否则报空指针异常？找了好久的bug
-            if(isAtRail(p) && (p.x != startP.x && p.y != startP.y)){
+            System.out.println("工兵类第488行--->(" + p.x + ","+ p.y +")" + "是否在铁轨上" + isAtRail(p));
+            if(isAtRail(p) && !startP.equals(p) && !endP.equals(p)){
                 deletePoint(p, alGraph);
             }
         }
+        System.out.println("工兵类第488行--->当前有的棋子有" );
+        chessList.forEach(chess ->
+                System.out.println(chess.getColor() + chess.getName()+ " ("+ chess.getP().getX() + ","+ chess.getP().getY() +")")
+        );
     }
 
     /**
