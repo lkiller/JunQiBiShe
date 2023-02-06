@@ -68,13 +68,24 @@ public class Chess implements Movable{
      */
     public static Point getPointFromXY(int x, int y){
         Point p = new Point();
-        p.x  = (x - MARGIN) / SPACEX + 1;
+        /*p.x  = (x - MARGIN) / SPACEX + 1;*/
         if(y < 584){
-            p.y  = (y - MARGIN) / SPACEY + 1;
+            p.y  = (y - MARGIN + 10) / SPACEY + 1;
         }else{
             p.y = (y - MARGIN + 30) / SPACEY + 1;
         }
-        return p;
+        if(x >45 && x<142) {
+            p.x = 1;
+            return p;
+        }
+        if(x >193 && x<289){p.x = 2;return p;}
+        if(x >335 && x<438){p.x = 3;return p;}
+        if(x >480 && x<581){p.x = 4;return p;}
+        if(x >626 && x<724){p.x = 5;return p;}
+        else{
+            return null;
+        }
+
     }
 
     /**
@@ -734,7 +745,8 @@ public class Chess implements Movable{
      * @return
      */
     public static boolean isAtXingYing(Chess chess){
-        Point p = Chess.getPointFromXY(chess.getX(), chess.getY());
+        System.out.println("748行chess" + chess.x + chess.y);
+        Point p = chess.getP();
         int X  = p.x;
         int Y  = p.y;
         if(X == 2 && Y == 3){
@@ -762,6 +774,9 @@ public class Chess implements Movable{
             return true;
         }
         if(X == 3 && Y == 11){
+            return true;
+        }
+        if(X == 3 && Y == 4){
             return true;
         }
         return false;

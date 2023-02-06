@@ -359,10 +359,10 @@ public class GongBing extends Chess implements Movable {
         if(startP.y == 12){
             if(startP.x == 2 || startP.x == 3 || startP.x == 4) return true;
         }
-        else   {
+            {
             //替换A
             {
-             if(startP.x == 1){
+                if(startP.x == 1){
                     if(startP.y == 2) A = 0;
                     if(startP.y == 3) A = 15;
                     if(startP.y == 4) A = 14;
@@ -480,15 +480,15 @@ public class GongBing extends Chess implements Movable {
         for (Chess chess : chessList) {
             p = chess.getP();
             //不删除本身的点，否则报空指针异常？找了好久的bug
-            System.out.println("工兵类第488行--->(" + p.x + ","+ p.y +")" + "是否在铁轨上" + isAtRail(p));
+            //System.out.println("工兵类第488行--->(" + p.x + ","+ p.y +")" + "是否在铁轨上" + isAtRail(p));
             if(isAtRail(p) && !startP.equals(p) && !endP.equals(p)){
                 deletePoint(p, alGraph);
             }
         }
-        System.out.println("工兵类第488行--->当前有的棋子有" );
+        /*System.out.println("工兵类第488行--->当前有的棋子有" );
         chessList.forEach(chess ->
                 System.out.println(chess.getColor() + chess.getName()+ " ("+ chess.getP().getX() + ","+ chess.getP().getY() +")")
-        );
+        );*/
     }
 
     /**
