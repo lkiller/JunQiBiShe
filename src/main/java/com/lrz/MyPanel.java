@@ -2,13 +2,15 @@ package com.lrz;
 
 import com.lrz.ChessSon.*;
 import com.lrz.Frame.MainFrame;
-
+import com.lrz.dao.ChessDao;
+import com.lrz.pojo.HuiQiChess;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Objects;
 
 
 /**
@@ -17,10 +19,14 @@ import java.util.Collections;
  * @time 2023/1/3 17:12
  */
 public class MyPanel extends JPanel {
+    public HuiQiChess huiQiChess;
+
+    private int step = 0;
     MainFrame mainFrame = null;
     public ArrayList<Chess> chessList = new ArrayList<Chess>();
     ArrayList<Point> plist = new ArrayList<>();
     Chess selectedChess = null;
+    Point selectP = null;
     Point p;
     Chess c1;
     Player player1 = new Player();//玩家一
@@ -32,37 +38,41 @@ public class MyPanel extends JPanel {
     boolean BlueDiLeiIsOver = false;
     boolean isInited = false;
     boolean cancelSelect = false;
+    ChessDao chessDao = new ChessDao();
+
     @Override
     public void paint(Graphics g) {
         super.paint(g);
         //画背景
         String bgPath = "lib\\bg.jpg";
         Image bgimg = Toolkit.getDefaultToolkit().getImage(bgPath);
-        g.drawImage(bgimg, 0, 0 ,this);
-        if(!isInited){
+        g.drawImage(bgimg, 0, 0, this);
+        if (!isInited) {
             InitdrawChess(g);
-        }else{
+        } else {
             drawChess(g);
         }
         isInited = true;
         //取消选择
-        if(cancelSelect){
+        if (cancelSelect) {
             cancelSelect = false;
             c1.draw(g, this);
         }
-        if(selectedChess != null){
+        if (selectedChess != null) {
             selectedChess.drawMargin(g);
         }
     }
-    public MyPanel(MainFrame mainFrame){
+
+    public MyPanel(MainFrame mainFrame) {
+        chessDao.start();
         this.mainFrame = mainFrame;
         createChess();
         addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
-                if(player1.isDefine() && player2.isDefine()){
+                if (player1.isDefine() && player2.isDefine()) {
                     GuiZe(e);
-                }else{
+                } else {
                     setPlayerColor(e);
                 }
             }
@@ -70,10 +80,283 @@ public class MyPanel extends JPanel {
     }
 
     /**
+     * 游戏规则
+     *
+     * @param e
+     */
+    private void GuiZe(MouseEvent e) {
+        mainFrame.hintPanel.redDiLei.setText("红地雷" + RedDiLei);
+        mainFrame.hintPanel.blueDiLei.setText("蓝地雷" + BlueDiLei);
+        System.out.println(e.getX() + "," + e.getY());
+        p = Chess.getPointFromXY(e.getX(), e.getY());
+        if (p == null) {
+            System.out.println("请重新准确点击棋子");
+            return;
+        } else {
+            System.out.println("(" + p.getX() + "," + p.getY() + ")");
+            mainFrame.hintPanel.j1.setText("点击了(" + p.getX() + "," + p.getY() + ")");
+            //打印点击的棋子信息
+            try {
+                if (selectedChess != null) {
+                    c1 = Chess.getChessByPoint(p, chessList);
+                    if (c1 != null && !c1.isShow()) {
+                        System.out.println("不能吃未翻开的棋子！请重新选择！");
+                        mainFrame.hintPanel.j1.setText("不能吃未翻开的棋子！");
+                        mainFrame.hintPanel.j2.setText("请重新选择！");
+                        mainFrame.hintPanel.j3.setText("");
+                        mainFrame.hintPanel.j4.setText("");
+                    }
+                } else {
+                    System.out.println("点击的棋子是" + Chess.getChessByPoint(p, chessList).getColor() + Chess.getChessByPoint(p, chessList).getName());
+                    mainFrame.hintPanel.j3.setText("");
+                    mainFrame.hintPanel.j4.setText("");
+                    mainFrame.hintPanel.j2.setText(Chess.getChessByPoint(p, chessList).getColor() + Chess.getChessByPoint(p, chessList).getName());
+                }
+
+            } catch (NullPointerException nullPointerException) {
+                System.out.println("点击位置空白");
+                mainFrame.hintPanel.j2.setText("点击位置空白");
+                mainFrame.hintPanel.j3.setText("");
+                mainFrame.hintPanel.j4.setText("");
+            }
+            //吃子、重选、走路
+            // 第一次选择
+            if (selectedChess == null) {
+                selectedChess = Chess.getChessByPoint(p, chessList);
+                selectP = p;
+                if (selectedChess == null) {
+                    System.out.println("请不要点击空白\n");
+                    mainFrame.hintPanel.j1.setText("请不要点击空白");
+                    mainFrame.hintPanel.j2.setText("");
+                    mainFrame.hintPanel.j3.setText("");
+                    mainFrame.hintPanel.j4.setText("");
+                }
+                //当前棋子已经翻开并且当前玩家阵营与当前选择棋子是同一个阵营
+                else if (selectedChess.isShow() && selectedChess.getColor().equals(culPlayer.getColor())) {
+                    System.out.println(culPlayer.getColor() + "方第一次选择棋子");
+                } else if (!selectedChess.isShow()) {//未翻开
+                    System.out.println(culPlayer.getColor() + "方翻开了" + selectedChess.getColor() + selectedChess.getName());
+                    mainFrame.hintPanel.j2.setText(culPlayer.getColor() + "方翻开了" + selectedChess.getColor() + selectedChess.getName());
+                    selectedChess.setShow(true);
+                    //翻开过后换玩家
+                    huiQiChess = new HuiQiChess(++step, culPlayer.getColor(), p, null, selectedChess, null, false);
+                    huiQiChess.setCanHuiQi(false);//不可以悔棋
+                    chessDao.insert("addStep", huiQiChess);
+                    culPlayer = changePlayer(culPlayer);
+                    //System.out.println("该" + culPlayer.getColor() +  "玩家走了\n" );
+                    mainFrame.hintPanel.colorLabel.setText("该" + culPlayer.getColor() + "玩家走了\n");
+                } else if (selectedChess.isShow() && !selectedChess.getColor().equals(culPlayer.getColor())) {
+                    System.out.println("请重新选择自己方的棋子！\n");
+                    mainFrame.hintPanel.j1.setText("请重新选择自己方的棋子！");
+                    mainFrame.hintPanel.j2.setText("");
+                    mainFrame.hintPanel.j3.setText("");
+                    mainFrame.hintPanel.j4.setText("");
+                    selectedChess = null;
+                    selectP = null;
+                    huiQiChess.setCanHuiQi(false);//不可以悔棋
+                }
+            }
+            //第n次点击棋盘
+            else {
+                System.out.println("159行startp坐标" + selectedChess.getP().x+ " ," + selectedChess.getP().y);
+                Point startP = selectedChess.getP();
+
+                c1 = Chess.getChessByPoint(p, chessList);
+                //两次选择同一个棋子，表示取消选择
+                if (c1 == selectedChess) {
+                    selectedChess = null;
+                    selectP = null;
+                    cancelSelect = true;
+                    mainFrame.hintPanel.j1.setText("取消选择");
+                    mainFrame.hintPanel.j2.setText("");
+                    mainFrame.hintPanel.j3.setText("");
+                    mainFrame.hintPanel.j4.setText("");
+                    System.out.println("取消选择");
+                } else if (c1 != null && !c1.isShow()) {
+                    System.out.println("选中棋子情况下不可以翻开棋子！请取消选择或走棋！");
+                    huiQiChess.setCanHuiQi(false);//不可以悔棋
+                } else if (selectedChess.isAbleMove(selectedChess.getP(), p) && selectedChess.hasNoOtherChess(selectedChess.getP(), p, MyPanel.this)) {
+                    System.out.println("起始位置(" + selectedChess.getP().getX() + "," + selectedChess.getP().getY() + ")到(" +
+                            p.getX() + "," + p.getY() + ")");
+                }
+
+                //如果点击的位置是空的  并且   可以移动  并且  移动的路上没有其他棋子遮挡
+                if (c1 == null && selectedChess.isAbleMove(selectedChess.getP(), p)
+                        && selectedChess.hasNoOtherChess(selectedChess.getP(), p, MyPanel.this)) {
+                    selectedChess.setP(p);
+                    System.out.println(culPlayer.getColor() + "方移动了" + selectedChess.getColor() + selectedChess.getName());
+                    mainFrame.hintPanel.j1.setText("");
+                    mainFrame.hintPanel.j2.setText("");
+                    mainFrame.hintPanel.j4.setText("");
+                    mainFrame.hintPanel.j3.setText(culPlayer.getColor() + "方移动了" + selectedChess.getColor() + selectedChess.getName());
+                    //移动过后换玩家
+                    huiQiChess = new HuiQiChess(++step, culPlayer.getColor(), startP, p, selectedChess, null, true);
+                    chessDao.insert("addStep", huiQiChess);
+                    culPlayer = changePlayer(culPlayer);
+                    //System.out.println("该" + culPlayer.getColor() +  "玩家走了\n" );
+                    mainFrame.hintPanel.colorLabel.setText("该" + culPlayer.getColor() + "玩家走了\n");
+                } else try {
+                    if (selectedChess != null && !selectedChess.isAbleMove(selectedChess.getP(), p)) {
+                        mainFrame.hintPanel.j4.setText("无法移动");
+                    }
+                    if (!c1.isShow()) {//如果c1还未翻开
+                        System.out.println("不能吃未翻开的棋子！请重新选择！");
+                        mainFrame.hintPanel.j1.setText("不能吃未翻开的棋子！");
+                        mainFrame.hintPanel.j2.setText("请重新选择！");
+                        mainFrame.hintPanel.j3.setText("");
+                        mainFrame.hintPanel.j4.setText("");
+                    }
+                    //两次选择同一种阵营，即重新选择
+                    else if (selectedChess.getColor().equals(c1.getColor()) && c1.isShow()) {
+                        selectedChess = c1;
+                        selectP = p;
+                        mainFrame.hintPanel.j1.setText("切换一个棋子");
+                        mainFrame.hintPanel.j2.setText("");
+                        mainFrame.hintPanel.j3.setText("");
+                        mainFrame.hintPanel.j4.setText("");
+                        System.out.println("切换一个棋子\n");
+                    }
+                    //两次选择不同阵营，且路上没有遮挡能移动，则吃子，下面是吃子的一系列判断
+                    else if (!selectedChess.getColor().equals(c1.getColor()) &&
+                            selectedChess.isAbleMove(selectedChess.getP(), p) &&
+                            selectedChess.hasNoOtherChess(selectedChess.getP(), p, MyPanel.this)) {
+                        if (!c1.isShow()) {//如果c1还未翻开
+                            System.out.println("不能吃未翻开的棋子！请重新选择！");
+                            mainFrame.hintPanel.j1.setText("不能吃未翻开的棋子！");
+                            mainFrame.hintPanel.j2.setText("请重新选择！");
+                            mainFrame.hintPanel.j3.setText("");
+                            mainFrame.hintPanel.j4.setText("");
+                        } else {
+                            //吃子需要删除被吃棋子、并将吃的棋子移动到被吃位置，被吃棋子如何找
+                            Chess eated = c1;
+                            //红方地雷挖完
+                            if (RedDiLeiIsOver && eated.getLevel() == -1 && isMinLevel(selectedChess)) {
+                                mainFrame.hintPanel.j1.setText("游戏结束，蓝方胜利");
+                                mainFrame.hintPanel.j2.setText("");
+                                mainFrame.hintPanel.j3.setText("");
+                                mainFrame.hintPanel.j4.setText("");
+                                System.out.println("游戏结束，蓝方胜利");
+                            }
+                            if (BlueDiLeiIsOver && eated.getLevel() == -1 && isMinLevel(selectedChess)) {
+                                mainFrame.hintPanel.j1.setText("游戏结束，红方胜利");
+                                mainFrame.hintPanel.j2.setText("");
+                                mainFrame.hintPanel.j3.setText("");
+                                mainFrame.hintPanel.j4.setText("");
+                                System.out.println("游戏结束，红方胜利");
+                            }
+                            //如果是工兵，则被吃的只能是地雷
+                            if (selectedChess.getLevel() == 1 && eated.getLevel() == 0) {
+                                boolean remove = chessList.remove(eated);
+                                //移除失败打印
+                                if (!remove) {
+                                    System.out.println("吃子失败");
+                                } else {
+                                    System.out.println("吃子成功");
+                                    //如果吃的棋子是红色地雷，则红地雷数量减一
+                                    if (eated.getColor().equals("红")) {
+                                        RedDiLei--;
+                                        mainFrame.hintPanel.redDiLei.setText("红地雷" + RedDiLei);
+                                        if (RedDiLei == 0) {
+                                            RedDiLeiIsOver = true;
+                                            System.out.println("红色地雷全部挖完，当前最小者可以开始扛蓝方军旗");
+                                        }
+                                    } else if (eated.getColor().equals("蓝")) {
+                                        BlueDiLei--;
+                                        mainFrame.hintPanel.redDiLei.setText("蓝地雷" + RedDiLei);
+                                        if (BlueDiLei == 0) {
+                                            BlueDiLeiIsOver = true;
+                                            System.out.println("蓝色地雷全部挖完，当前最小者可以开始扛红方军旗");
+                                        }
+                                    }
+                                    selectedChess.setP(p);
+                                }
+                                huiQiChess = new HuiQiChess(++step, culPlayer.getColor(), startP, p, selectedChess, eated, true);
+                                chessDao.insert("addStep", huiQiChess);
+                                culPlayer = changePlayer(culPlayer);
+                                //System.out.println("该" + culPlayer.getColor() +  "玩家走了\n" );
+                                mainFrame.hintPanel.colorLabel.setText("该" + culPlayer.getColor() + "玩家走了\n");
+                            }
+                            //如果是炸弹，则同归于尽，军旗除外  ||  如果被吃棋子是炸弹，则两边都死
+                            else if ((selectedChess.getLevel() == 10 && eated.getLevel() != -1 && !Chess.isAtXingYing(eated))
+                                    || (eated.getLevel() == 10 && !Chess.isAtXingYing(eated))) {
+                                System.out.println("是否在行营中" + Chess.isAtXingYing(eated));
+                                boolean remove1 = chessList.remove(eated);
+                                boolean remove2 = chessList.remove(selectedChess);
+                                //移除失败打印
+                                if (!remove1 || !remove2) {
+                                    System.out.println("炸失败");
+                                } else {
+                                    System.out.println("炸成功");
+                                }
+                                huiQiChess = new HuiQiChess(++step, culPlayer.getColor(), startP, p, selectedChess, eated, true);
+                                chessDao.insert("addStep", huiQiChess);
+                                culPlayer = changePlayer(culPlayer);
+                                //System.out.println("该" + culPlayer.getColor() +  "玩家走了\n" );
+                                mainFrame.hintPanel.colorLabel.setText("该" + culPlayer.getColor() + "玩家走了\n");
+                            }
+                            //如果两个棋子等级一样，同归于尽
+                            else if (selectedChess.getLevel() == eated.getLevel() && !Chess.isAtXingYing(eated)) {
+                                huiQiChess = new HuiQiChess(++step, culPlayer.getColor(), startP, p, selectedChess, eated, true);
+                                chessDao.insert("addStep", huiQiChess);
+                                System.out.println("同归于尽");
+                                boolean remove1 = chessList.remove(selectedChess);
+                                boolean remove2 = chessList.remove(eated);
+                                if (remove1 && remove2) {
+                                    System.out.println("同归于尽成功");
+                                } else {
+                                    System.out.println("同归于尽失败");
+                                }
+                                culPlayer = changePlayer(culPlayer);
+                                //System.out.println("该" + culPlayer.getColor() +  "玩家走了\n" );
+                                mainFrame.hintPanel.colorLabel.setText("该" + culPlayer.getColor() + "玩家走了\n");
+                            } else if (Chess.isAtXingYing(eated)) {
+                                mainFrame.hintPanel.j1.setText("被吃棋子在行营中");
+                                mainFrame.hintPanel.j2.setText("不可吃");
+                                mainFrame.hintPanel.j3.setText("");
+                                mainFrame.hintPanel.j4.setText("");
+                                System.out.println("被吃棋子在行营中，不可吃");
+                            }
+                            //如果等级比被吃大且被吃棋子不在行营中
+                            else if ((selectedChess.getLevel() > eated.getLevel()) && !Chess.isAtXingYing(eated) && eated.getLevel() != -1 &&
+                                    eated.getLevel() != 0) {
+                                boolean remove = chessList.remove(eated);
+                                //移除失败打印
+                                if (!remove) {
+                                    System.out.println("吃子失败");
+                                } else {
+                                    mainFrame.hintPanel.j4.setText(selectedChess.getColor() + selectedChess.getName() + "吃了" + eated.getColor() + eated.getName());
+                                    selectedChess.setP(p);
+                                    huiQiChess = new HuiQiChess(++step, culPlayer.getColor(), startP, p, selectedChess, eated, true);
+                                    chessDao.insert("addStep", huiQiChess);
+                                    culPlayer = changePlayer(culPlayer);
+                                    mainFrame.hintPanel.colorLabel.setText("该" + culPlayer.getColor() + "玩家走了\n");
+                                    System.out.println("吃子成功");
+                                }
+                            } else if (selectedChess.getLevel() < eated.getLevel()) {
+                                mainFrame.hintPanel.j1.setText("等级没被吃的大！");
+                                mainFrame.hintPanel.j2.setText("不可吃");
+                                mainFrame.hintPanel.j3.setText("");
+                                mainFrame.hintPanel.j4.setText("");
+                                System.out.println("不可吃，等级没被吃的大！\n");
+                            }
+                        }
+                    }
+                } catch (NullPointerException nullPointerException) {
+                    //throw new RuntimeException(nullPointerException);
+                }
+            }
+        }
+
+        repaint();
+        updateUI();
+    }
+
+    /**
      * 创建棋子
      */
-    private void createChess(){
-        {chessList.add(new Siling("司令", "红"));
+    private void createChess() {
+        {
+            chessList.add(new Siling("司令", "红"));
             chessList.add(new JunZhang("军长", "红"));
             chessList.add(new ShiZhang("师长", "红"));
             chessList.add(new ShiZhang("师长", "红"));
@@ -122,79 +405,84 @@ public class MyPanel extends JPanel {
             chessList.add(new DiLei("地雷", "蓝"));
             chessList.add(new ZhaDan("炸弹", "蓝"));
             chessList.add(new ZhaDan("炸弹", "蓝"));
-            chessList.add(new JunQi("军旗", "蓝"));}
-            Collections.shuffle(chessList);
+            chessList.add(new JunQi("军旗", "蓝"));
+        }
+        Collections.shuffle(chessList);
         //设置所有棋子不可见
-        for(Chess c : chessList){
-                c.setShow(false);
-            }
+        for (Chess c : chessList) {
+            c.setShow(false);
+        }
     }
+
     /**
      * 画棋子
+     *
      * @param g
      */
-    private void InitdrawChess(Graphics g){
+    private void InitdrawChess(Graphics g) {
         int pi = 0;
-        {plist.add(new Point(1,1));
-            plist.add(new Point(2,1));
-            plist.add(new Point(3,1));
-            plist.add(new Point(4,1));
-            plist.add(new Point(5,1));
+        {
+            plist.add(new Point(1, 1));
+            plist.add(new Point(2, 1));
+            plist.add(new Point(3, 1));
+            plist.add(new Point(4, 1));
+            plist.add(new Point(5, 1));
 
-            plist.add(new Point(1,2));
-            plist.add(new Point(2,2));
-            plist.add(new Point(3,2));
-            plist.add(new Point(4,2));
-            plist.add(new Point(5,2));
+            plist.add(new Point(1, 2));
+            plist.add(new Point(2, 2));
+            plist.add(new Point(3, 2));
+            plist.add(new Point(4, 2));
+            plist.add(new Point(5, 2));
 
-            plist.add(new Point(1,3));
-            plist.add(new Point(3,3));
-            plist.add(new Point(5,3));
+            plist.add(new Point(1, 3));
+            plist.add(new Point(3, 3));
+            plist.add(new Point(5, 3));
 
-            plist.add(new Point(1,4));
-            plist.add(new Point(2,4));
-            plist.add(new Point(4,4));
-            plist.add(new Point(5,4));
+            plist.add(new Point(1, 4));
+            plist.add(new Point(2, 4));
+            plist.add(new Point(4, 4));
+            plist.add(new Point(5, 4));
 
-            plist.add(new Point(1,5));
-            plist.add(new Point(3,5));
-            plist.add(new Point(5,5));
+            plist.add(new Point(1, 5));
+            plist.add(new Point(3, 5));
+            plist.add(new Point(5, 5));
 
-            plist.add(new Point(1,6));
-            plist.add(new Point(2,6));
-            plist.add(new Point(3,6));
-            plist.add(new Point(4,6));
-            plist.add(new Point(5,6));
-            plist.add(new Point(1,9));
-            plist.add(new Point(2,9));
-            plist.add(new Point(3,9));
-            plist.add(new Point(4,9));
-            plist.add(new Point(5,9));
+            plist.add(new Point(1, 6));
+            plist.add(new Point(2, 6));
+            plist.add(new Point(3, 6));
+            plist.add(new Point(4, 6));
+            plist.add(new Point(5, 6));
+            plist.add(new Point(1, 9));
+            plist.add(new Point(2, 9));
+            plist.add(new Point(3, 9));
+            plist.add(new Point(4, 9));
+            plist.add(new Point(5, 9));
 
-            plist.add(new Point(1,10));
-            plist.add(new Point(3,10));
-            plist.add(new Point(5,10));
+            plist.add(new Point(1, 10));
+            plist.add(new Point(3, 10));
+            plist.add(new Point(5, 10));
 
-            plist.add(new Point(1,11));
-            plist.add(new Point(2,11));
-            plist.add(new Point(4,11));
-            plist.add(new Point(5,11));
+            plist.add(new Point(1, 11));
+            plist.add(new Point(2, 11));
+            plist.add(new Point(4, 11));
+            plist.add(new Point(5, 11));
 
-            plist.add(new Point(1,12));
-            plist.add(new Point(3,12));
-            plist.add(new Point(5,12));
+            plist.add(new Point(1, 12));
+            plist.add(new Point(3, 12));
+            plist.add(new Point(5, 12));
 
-            plist.add(new Point(1,13));
-            plist.add(new Point(2,13));
-            plist.add(new Point(3,13));
-            plist.add(new Point(4,13));
-            plist.add(new Point(5,13));
+            plist.add(new Point(1, 13));
+            plist.add(new Point(2, 13));
+            plist.add(new Point(3, 13));
+            plist.add(new Point(4, 13));
+            plist.add(new Point(5, 13));
 
-            plist.add(new Point(1,14));
-            plist.add(new Point(2,14));
-            plist.add(new Point(3,14));
-            plist.add(new Point(4,14));
-            plist.add(new Point(5,14));}
+            plist.add(new Point(1, 14));
+            plist.add(new Point(2, 14));
+            plist.add(new Point(3, 14));
+            plist.add(new Point(4, 14));
+            plist.add(new Point(5, 14));
+        }
         for (Chess chess : chessList) {
             chess.setP(plist.get(pi++));
             //画出未知样子
@@ -204,283 +492,27 @@ public class MyPanel extends JPanel {
 
     /**
      * 画所有棋子，分可见和不可见
+     *
      * @param g
      */
-    private void drawChess(Graphics g){
+    private void drawChess(Graphics g) {
         for (Chess chess : chessList) {
-            if(chess.isShow()){
+            if (chess.isShow()) {
                 chess.draw(g, this);
-            }else{
+            } else {
                 chess.drawUnknown(g, this);
             }
         }
     }
 
-    /**
-     * 游戏规则
-     * @param e
-     */
-    private void GuiZe(MouseEvent e){
-        mainFrame.hintPanel.redDiLei.setText("红地雷" + RedDiLei);
-        mainFrame.hintPanel.blueDiLei.setText("蓝地雷" + BlueDiLei);
-        System.out.println(e.getX() + "," + e.getY());
-        p = Chess.getPointFromXY(e.getX(), e.getY());
-        if(p == null){
-            System.out.println("请重新准确点击棋子");
-            return;
-        }else{
-            System.out.println("(" + p.getX() + "," + p.getY() + ")");
-            mainFrame.hintPanel.j1.setText("点击了(" + p.getX() + "," + p.getY() + ")");
-            //打印点击的棋子信息
-            try{
-                if(selectedChess != null){
-                    c1 = Chess.getChessByPoint(p, chessList);
-                    if(c1 != null && !c1.isShow()){
-                        System.out.println("不能吃未翻开的棋子！请重新选择！");
-                        mainFrame.hintPanel.j1.setText("不能吃未翻开的棋子！");
-                        mainFrame.hintPanel.j2.setText("请重新选择！");
-                        mainFrame.hintPanel.j3.setText("");
-                        mainFrame.hintPanel.j4.setText("");
-                    }
-                }
-                else {
-                    System.out.println("点击的棋子是" + Chess.getChessByPoint(p, chessList).getColor() + Chess.getChessByPoint(p, chessList).getName());
-                    mainFrame.hintPanel.j3.setText("");
-                    mainFrame.hintPanel.j4.setText("");
-                    mainFrame.hintPanel.j2.setText(Chess.getChessByPoint(p, chessList).getColor() + Chess.getChessByPoint(p, chessList).getName());
-                }
-
-            }catch (NullPointerException nullPointerException){
-                System.out.println("点击位置空白");
-                mainFrame.hintPanel.j2.setText("点击位置空白");
-                mainFrame.hintPanel.j3.setText("");
-                mainFrame.hintPanel.j4.setText("");
-            }
-            //吃子、重选、走路
-            // 第一次选择
-            if(selectedChess == null){
-                selectedChess = Chess.getChessByPoint(p, chessList);
-                if(selectedChess == null){
-                    System.out.println("请不要点击空白\n");
-                    mainFrame.hintPanel.j1.setText("请不要点击空白");
-                    mainFrame.hintPanel.j2.setText("");
-                    mainFrame.hintPanel.j3.setText("");
-                    mainFrame.hintPanel.j4.setText("");
-                }
-                //当前棋子已经翻开并且当前玩家阵营与当前选择棋子是同一个阵营
-                else if(selectedChess.isShow() && selectedChess.getColor().equals(culPlayer.getColor())){
-                    System.out.println(culPlayer.getColor() + "方第一次选择棋子");
-                    //mainFrame.hintPanel.jTextArea.append(culPlayer.getColor() + "方第一次选择棋子");
-                }else if(!selectedChess.isShow()){//未翻开
-                    System.out.println(culPlayer.getColor() + "方翻开了" + selectedChess.getColor() + selectedChess.getName());
-                    mainFrame.hintPanel.j2.setText(culPlayer.getColor() + "方翻开了" + selectedChess.getColor() + selectedChess.getName());
-                    selectedChess.setShow(true);
-                    //翻开过后换玩家
-                    culPlayer = changePlayer(culPlayer);
-                    //System.out.println("该" + culPlayer.getColor() +  "玩家走了\n" );
-                    mainFrame.hintPanel.colorLabel.setText("该" + culPlayer.getColor() +  "玩家走了\n");
-                }else if(selectedChess.isShow() && !selectedChess.getColor().equals(culPlayer.getColor())){
-                    System.out.println("请重新选择自己方的棋子！\n");
-                    mainFrame.hintPanel.j1.setText("请重新选择自己方的棋子！");
-                    mainFrame.hintPanel.j2.setText("");
-                    mainFrame.hintPanel.j3.setText("");
-                    mainFrame.hintPanel.j4.setText("");
-                    selectedChess = null;
-                }
-            }
-            //第n次点击棋盘
-            else{
-                c1 = Chess.getChessByPoint(p, chessList);
-                //两次选择同一个棋子，表示取消选择
-                if(c1 == selectedChess){
-                    selectedChess = null;
-                    cancelSelect = true;
-                    mainFrame.hintPanel.j1.setText("取消选择");
-                    mainFrame.hintPanel.j2.setText("");
-                    mainFrame.hintPanel.j3.setText("");
-                    mainFrame.hintPanel.j4.setText("");
-                    System.out.println("取消选择");
-                }
-                else if(c1 != null && !c1.isShow()){
-                    System.out.println("选中棋子情况下不可以翻开棋子！请取消选择或走棋！");
-                }else if(selectedChess.isAbleMove(selectedChess.getP(), p) && selectedChess.hasNoOtherChess(selectedChess.getP(), p, MyPanel.this)){
-                    System.out.println("起始位置(" + selectedChess.getP().getX() + "," + selectedChess.getP().getY() + ")到(" +
-                            p.getX() + "," + p.getY() + ")");
-                }
-                //如果点击的位置是空的  并且   可以移动  并且  移动的路上没有其他棋子遮挡
-                if(c1 == null && selectedChess.isAbleMove(selectedChess.getP(), p)
-                        && selectedChess.hasNoOtherChess(selectedChess.getP(), p, MyPanel.this)){
-                    selectedChess.setP(p);
-                    System.out.println(culPlayer.getColor() + "方移动了" + selectedChess.getColor() + selectedChess.getName());
-                    mainFrame.hintPanel.j1.setText("");
-                    mainFrame.hintPanel.j2.setText("");
-                    mainFrame.hintPanel.j4.setText("");
-                    mainFrame.hintPanel.j3.setText(culPlayer.getColor() + "方移动了" + selectedChess.getColor() + selectedChess.getName());
-                    //移动过后换玩家
-                    culPlayer = changePlayer(culPlayer);
-                    //System.out.println("该" + culPlayer.getColor() +  "玩家走了\n" );
-                    mainFrame.hintPanel.colorLabel.setText("该" + culPlayer.getColor() +  "玩家走了\n");
-                }
-                else try{
-                    if(selectedChess!= null && !selectedChess.isAbleMove(selectedChess.getP(), p)){
-                        mainFrame.hintPanel.j4.setText("无法移动");
-                    }
-                    if(!c1.isShow()){//如果c1还未翻开
-                        System.out.println("不能吃未翻开的棋子！请重新选择！");
-                        mainFrame.hintPanel.j1.setText("不能吃未翻开的棋子！");
-                        mainFrame.hintPanel.j2.setText("请重新选择！");
-                        mainFrame.hintPanel.j3.setText("");
-                        mainFrame.hintPanel.j4.setText("");
-                    }
-                    //两次选择同一种阵营，即重新选择
-                    else if(selectedChess.getColor().equals(c1.getColor()) && c1.isShow()) {
-                        selectedChess = c1;
-                        mainFrame.hintPanel.j1.setText("切换一个棋子");
-                        mainFrame.hintPanel.j2.setText("");
-                        mainFrame.hintPanel.j3.setText("");
-                        mainFrame.hintPanel.j4.setText("");
-                        System.out.println("切换一个棋子\n");
-                    }
-                    //两次选择不同阵营，且路上没有遮挡能移动，则吃子，下面是吃子的一系列判断
-                    else if(!selectedChess.getColor().equals(c1.getColor()) &&
-                            selectedChess.isAbleMove(selectedChess.getP(), p) &&
-                            selectedChess.hasNoOtherChess(selectedChess.getP(), p, MyPanel.this)) {
-                        if(!c1.isShow()){//如果c1还未翻开
-                            System.out.println("不能吃未翻开的棋子！请重新选择！");
-                            mainFrame.hintPanel.j1.setText("不能吃未翻开的棋子！");
-                            mainFrame.hintPanel.j2.setText("请重新选择！");
-                            mainFrame.hintPanel.j3.setText("");
-                            mainFrame.hintPanel.j4.setText("");
-                        }else{
-                            //吃子需要删除被吃棋子、并将吃的棋子移动到被吃位置，被吃棋子如何找
-                            Chess eated = c1;
-                            //红方地雷挖完
-                            if(RedDiLeiIsOver && eated.getLevel() == -1 && isMinLevel(selectedChess)){
-                                mainFrame.hintPanel.j1.setText("游戏结束，蓝方胜利");
-                                mainFrame.hintPanel.j2.setText("");
-                                mainFrame.hintPanel.j3.setText("");
-                                mainFrame.hintPanel.j4.setText("");
-                                System.out.println("游戏结束，蓝方胜利");
-                            }
-                            if(BlueDiLeiIsOver && eated.getLevel() == -1 && isMinLevel(selectedChess)){
-                                mainFrame.hintPanel.j1.setText("游戏结束，红方胜利");
-                                mainFrame.hintPanel.j2.setText("");
-                                mainFrame.hintPanel.j3.setText("");
-                                mainFrame.hintPanel.j4.setText("");
-                                System.out.println("游戏结束，红方胜利");
-                            }
-                            //如果是工兵，则被吃的只能是地雷
-                            if(selectedChess.getLevel() == 1 && eated.getLevel() == 0 ){
-                                boolean remove = chessList.remove(eated);
-                                //移除失败打印
-                                if(!remove){
-                                    System.out.println("吃子失败");
-                                }else{
-                                    System.out.println("吃子成功");
-                                    //如果吃的棋子是红色地雷，则红地雷数量减一
-                                    if(eated.getColor().equals("红")){
-                                        RedDiLei--;
-                                        mainFrame.hintPanel.redDiLei.setText("红地雷" + RedDiLei);
-                                        if(RedDiLei == 0){
-                                            RedDiLeiIsOver = true;
-                                            System.out.println("红色地雷全部挖完，当前最小者可以开始扛蓝方军旗");
-                                        }
-                                    }else if(eated.getColor().equals("蓝")){
-                                        BlueDiLei--;
-                                        mainFrame.hintPanel.redDiLei.setText("蓝地雷" + RedDiLei);
-                                        if(BlueDiLei == 0){
-                                            BlueDiLeiIsOver = true;
-                                            System.out.println("蓝色地雷全部挖完，当前最小者可以开始扛红方军旗");
-                                        }
-                                    }
-                                    selectedChess.setP(p);
-                                }
-                                culPlayer = changePlayer(culPlayer);
-                                //System.out.println("该" + culPlayer.getColor() +  "玩家走了\n" );
-                                mainFrame.hintPanel.colorLabel.setText("该" + culPlayer.getColor() +  "玩家走了\n");
-                            }
-                            //如果是炸弹，则同归于尽，军旗除外  ||  如果被吃棋子是炸弹，则两边都死
-                            else if((selectedChess.getLevel() == 10 && eated.getLevel() != -1 && !Chess.isAtXingYing(eated))
-                                    || (eated.getLevel() == 10 && !Chess.isAtXingYing(eated)) ){
-                                System.out.println("是否在行营中" + Chess.isAtXingYing(eated));
-                                boolean remove1 = chessList.remove(eated);
-                                boolean remove2 = chessList.remove(selectedChess);
-                                //移除失败打印
-                                if(!remove1 || !remove2){
-                                    System.out.println("炸失败");
-                                }else{
-                                    System.out.println("炸成功");
-                                }
-                                culPlayer = changePlayer(culPlayer);
-                                //System.out.println("该" + culPlayer.getColor() +  "玩家走了\n" );
-                                mainFrame.hintPanel.colorLabel.setText("该" + culPlayer.getColor() +  "玩家走了\n");
-                            }
-                            //如果两个棋子等级一样，同归于尽
-                            else if(selectedChess.getLevel() == eated.getLevel() && !Chess.isAtXingYing(eated)){
-                                System.out.println("同归于尽");
-                                boolean remove1 = chessList.remove(selectedChess);
-                                boolean remove2 = chessList.remove(eated);
-                                if(remove1 && remove2){
-                                    System.out.println("同归于尽成功");
-                                }else{
-                                    System.out.println("同归于尽失败");
-                                }
-                                culPlayer = changePlayer(culPlayer);
-                                //System.out.println("该" + culPlayer.getColor() +  "玩家走了\n" );
-                                mainFrame.hintPanel.colorLabel.setText("该" + culPlayer.getColor() +  "玩家走了\n");
-                            }
-                            else if(Chess.isAtXingYing(eated)){
-                                mainFrame.hintPanel.j1.setText("被吃棋子在行营中");
-                                mainFrame.hintPanel.j2.setText("不可吃");
-                                mainFrame.hintPanel.j3.setText("");
-                                mainFrame.hintPanel.j4.setText("");
-                                System.out.println("被吃棋子在行营中，不可吃");
-                            }
-                            //如果等级比被吃大且被吃棋子不在行营中
-                            else if((selectedChess.getLevel() > eated.getLevel()) && !Chess.isAtXingYing(eated) && eated.getLevel()!= -1 &&
-                                    eated.getLevel()!= 0){
-                                boolean remove = chessList.remove(eated);
-                                //移除失败打印
-                                if(!remove){
-                                    System.out.println("吃子失败");
-                                }else{
-                                    mainFrame.hintPanel.j4.setText(selectedChess.getColor()+ selectedChess.getName()+"吃了" + eated.getColor() + eated.getName());
-                                    selectedChess.setP(p);
-                                    culPlayer = changePlayer(culPlayer);
-                                    mainFrame.hintPanel.colorLabel.setText("该" + culPlayer.getColor() +  "玩家走了\n");
-                                    System.out.println("吃子成功");
-
-                                }
-                            /*culPlayer = changePlayer(culPlayer);
-                            //System.out.println("该" + culPlayer.getColor() +  "玩家走了\n" );
-                            mainFrame.hintPanel.j4.setText(selectedChess.getColor()+ selectedChess.getName()+"吃了" + eated.getColor() + eated.getName());
-                            mainFrame.hintPanel.colorLabel.setText("该" + culPlayer.getColor() +  "玩家走了\n");*/
-                            }
-                            else if(selectedChess.getLevel() < eated.getLevel()){
-                                mainFrame.hintPanel.j1.setText("等级没被吃的大！");
-                                mainFrame.hintPanel.j2.setText("不可吃");
-                                mainFrame.hintPanel.j3.setText("");
-                                mainFrame.hintPanel.j4.setText("");
-                                System.out.println("不可吃，等级没被吃的大！\n");
-                            }
-                        }
-                    }
-                }catch (NullPointerException nullPointerException){
-                    throw new RuntimeException(nullPointerException);
-                }
-            }
-        }
-
-        repaint();
-        updateUI();
-    }
 
     /**
      * 改变当前玩家
+     *
      * @param culPlayer
      * @return
      */
-    private Player changePlayer(Player culPlayer){
+    private Player changePlayer(Player culPlayer) {
         selectedChess = null;
         return culPlayer == player1 ? player2 : player1;
     }
@@ -489,19 +521,20 @@ public class MyPanel extends JPanel {
 
     /**
      * 分配阵营
+     *
      * @param e
      */
-    private void setPlayerColor(MouseEvent e){
+    private void setPlayerColor(MouseEvent e) {
         p = Chess.getPointFromXY(e.getX(), e.getY());
-        if(p == null){
+        if (p == null) {
             return;
-        }else{
+        } else {
             System.out.println("(" + p.getX() + "," + p.getY() + ")");
             Chess chessByPoint = Chess.getChessByPoint(p, chessList);
 //打印点击的棋子信息
-            if(chessByPoint == null){
+            if (chessByPoint == null) {
                 System.out.println("请不要点击空白处！\n");
-            }else {
+            } else {
                 //第一次点 且只能点未翻开的
                 if (culChess == null && !chessByPoint.isShow()) {
                     System.out.println("点击的棋子是" + chessByPoint.getColor() + chessByPoint.getName());
@@ -516,7 +549,7 @@ public class MyPanel extends JPanel {
                     updateUI();
                 }
                 //第n次点
-                else if(culChess != null && !chessByPoint.isShow()){
+                else if (culChess != null && !chessByPoint.isShow()) {
                     //如果第n次和上一次点的颜色不同
                     if (!culChess.getColor().equals(chessByPoint.getColor())) {
                         System.out.println("点击的棋子是" + chessByPoint.getColor() + chessByPoint.getName());
@@ -540,8 +573,7 @@ public class MyPanel extends JPanel {
                         repaint();
                         updateUI();
                     }
-                }
-                else{
+                } else {
                     System.out.println("请点击未翻开的棋子\n");
                 }
             }
@@ -551,20 +583,29 @@ public class MyPanel extends JPanel {
 
     /**
      * 判断是否是当前最小棋子
+     *
      * @param c
      * @return
      */
-    public boolean isMinLevel(Chess c){
+    public boolean isMinLevel(Chess c) {
         int cLevel = c.getLevel();
         String cColor = c.getColor();
-        for (Chess chess: chessList) {
-            if(chess.getColor().equals(cColor)){
+        for (Chess chess : chessList) {
+            if (chess.getColor().equals(cColor)) {
                 //只要有一个比当前级别小，就返回false，即不是最小棋子，地雷军旗除外
-                if(chess.getLevel() < cLevel && chess.getLevel() > 0){
+                if (chess.getLevel() < cLevel && chess.getLevel() > 0) {
                     return false;
                 }
             }
         }
         return true;
+    }
+
+    public int getStep() {
+        return step;
+    }
+
+    public void setStep(int step) {
+        this.step = step;
     }
 }

@@ -3,6 +3,12 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <!--namespace先随意写⼀个-->
-<mapper namespace="car">
-
+<mapper namespace="chess">
+    <insert id="addStep">
+        insert into t_huiqi(step, player, startPx, startPy, endPx, endPy, moveChess, eatedChess, canHuiQi)
+        values(#{step},#{player},#{startPx},#{startPy},#{endPx},#{endPy},#{moveChessC},#{eatedChessC},#{canHuiQi})
+    </insert>
+    <select id="start" resultType="com.lrz.Chess">
+        select step from t_huiqi
+    </select>
 </mapper>
