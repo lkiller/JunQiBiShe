@@ -6,9 +6,17 @@
 <mapper namespace="chess">
     <insert id="addStep">
         insert into t_huiqi(step, player, startPx, startPy, endPx, endPy, moveChess, eatedChess, canHuiQi)
-        values(#{step},#{player},#{startPx},#{startPy},#{endPx},#{endPy},#{moveChessC},#{eatedChessC},#{canHuiQi})
+        values(#{step},#{player},#{startPx},#{startPy},#{endPx},#{endPy},#{moveChess},#{eatedChess},#{canHuiQi})
     </insert>
-    <select id="start" resultType="com.lrz.Chess">
-        select step from t_huiqi
+    <delete id="start">
+        delete from t_huiqi
+    </delete>
+    <select id="selectByStep" resultType="com.lrz.pojo.HuiQiChess">
+        select step, player, startPx, startPy, endPx, endPy, moveChess , eatedChess, canHuiQi from t_huiqi
+        where step=#{step}
     </select>
+
+    <delete id="deleteById">
+        delete from t_huiqi where step=#{step}
+    </delete>
 </mapper>

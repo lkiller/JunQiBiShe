@@ -10,7 +10,6 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Objects;
 
 
 /**
@@ -26,6 +25,7 @@ public class MyPanel extends JPanel {
     public ArrayList<Chess> chessList = new ArrayList<Chess>();
     ArrayList<Point> plist = new ArrayList<>();
     Chess selectedChess = null;
+    Chess lastChess = null;//悔棋前一个
     Point selectP = null;
     Point p;
     Chess c1;
@@ -141,6 +141,7 @@ public class MyPanel extends JPanel {
                     //翻开过后换玩家
                     huiQiChess = new HuiQiChess(++step, culPlayer.getColor(), p, null, selectedChess, null, false);
                     huiQiChess.setCanHuiQi(false);//不可以悔棋
+                    lastChess = selectedChess;
                     chessDao.insert("addStep", huiQiChess);
                     culPlayer = changePlayer(culPlayer);
                     //System.out.println("该" + culPlayer.getColor() +  "玩家走了\n" );
@@ -192,6 +193,7 @@ public class MyPanel extends JPanel {
                     //移动过后换玩家
                     huiQiChess = new HuiQiChess(++step, culPlayer.getColor(), startP, p, selectedChess, null, true);
                     chessDao.insert("addStep", huiQiChess);
+                    lastChess = selectedChess;
                     culPlayer = changePlayer(culPlayer);
                     //System.out.println("该" + culPlayer.getColor() +  "玩家走了\n" );
                     mainFrame.hintPanel.colorLabel.setText("该" + culPlayer.getColor() + "玩家走了\n");
@@ -272,6 +274,7 @@ public class MyPanel extends JPanel {
                                 }
                                 huiQiChess = new HuiQiChess(++step, culPlayer.getColor(), startP, p, selectedChess, eated, true);
                                 chessDao.insert("addStep", huiQiChess);
+                                lastChess = selectedChess;
                                 culPlayer = changePlayer(culPlayer);
                                 //System.out.println("该" + culPlayer.getColor() +  "玩家走了\n" );
                                 mainFrame.hintPanel.colorLabel.setText("该" + culPlayer.getColor() + "玩家走了\n");
@@ -289,6 +292,7 @@ public class MyPanel extends JPanel {
                                     System.out.println("炸成功");
                                 }
                                 huiQiChess = new HuiQiChess(++step, culPlayer.getColor(), startP, p, selectedChess, eated, true);
+                                lastChess = selectedChess;
                                 chessDao.insert("addStep", huiQiChess);
                                 culPlayer = changePlayer(culPlayer);
                                 //System.out.println("该" + culPlayer.getColor() +  "玩家走了\n" );
@@ -297,6 +301,7 @@ public class MyPanel extends JPanel {
                             //如果两个棋子等级一样，同归于尽
                             else if (selectedChess.getLevel() == eated.getLevel() && !Chess.isAtXingYing(eated)) {
                                 huiQiChess = new HuiQiChess(++step, culPlayer.getColor(), startP, p, selectedChess, eated, true);
+                                lastChess = selectedChess;
                                 chessDao.insert("addStep", huiQiChess);
                                 System.out.println("同归于尽");
                                 boolean remove1 = chessList.remove(selectedChess);
@@ -327,6 +332,7 @@ public class MyPanel extends JPanel {
                                     mainFrame.hintPanel.j4.setText(selectedChess.getColor() + selectedChess.getName() + "吃了" + eated.getColor() + eated.getName());
                                     selectedChess.setP(p);
                                     huiQiChess = new HuiQiChess(++step, culPlayer.getColor(), startP, p, selectedChess, eated, true);
+                                    lastChess = selectedChess;
                                     chessDao.insert("addStep", huiQiChess);
                                     culPlayer = changePlayer(culPlayer);
                                     mainFrame.hintPanel.colorLabel.setText("该" + culPlayer.getColor() + "玩家走了\n");
@@ -607,5 +613,77 @@ public class MyPanel extends JPanel {
 
     public void setStep(int step) {
         this.step = step;
+    }
+
+    public void huiQi(){
+        int temp = step;
+        HuiQiChess huiQiChessResult = chessDao.selectStep(temp);
+        System.out.println("查询step" + step);
+        System.out.println(huiQiChessResult);
+        if(huiQiChessResult.isCanHuiQi()){
+            System.out.println(huiQiChessResult.getEatedChessC());
+            if( "空".equals(huiQiChessResult.getEatedChessC()) ){//即没有吃子
+                //lastChess.setP(huiQiChessResult.getStartP());
+                Chess.getChessByPoint(huiQiChessResult.getEndP(), chessList).setP(huiQiChessResult.getStartP());
+                chessDao.deleteById(step--);
+                culPlayer = changePlayer(culPlayer);//还是用之前的
+                mainFrame.hintPanel.colorLabel.setText("该" + culPlayer.getColor() + "玩家走了\n");
+                selectedChess = lastChess;//悔棋过后，selectChess需要变成lastChess？？是吗
+                repaint();
+            }else{//有吃子情况
+                //别人炸炸弹
+                if("炸弹".equals(huiQiChessResult.getEatedChessC().substring(1, 3)) ){
+                    Chess zhaDan = new Chess(huiQiChessResult.getEatedChessC().substring(1, 3),
+                            huiQiChessResult.getEatedChessC().substring(0, 1));
+                    zhaDan.setShow(true);
+                    zhaDan.setP(huiQiChessResult.getEndP());
+                    Chess moveChess = new Chess(huiQiChessResult.getMoveChessC().substring(1, 3),
+                            huiQiChessResult.getMoveChessC().substring(0, 1));
+                    moveChess.setP(huiQiChessResult.getStartP());
+                    moveChess.setShow(true);
+                    chessList.add(zhaDan);
+                    chessList.add(moveChess);
+                    culPlayer = changePlayer(culPlayer);//还是用之前的
+                    mainFrame.hintPanel.colorLabel.setText("该" + culPlayer.getColor() + "玩家走了\n");
+                    //炸弹炸别人
+                }else if("炸弹".equals(huiQiChessResult.getMoveChessC().substring(1, 3))){
+                    Chess zhaDan = new Chess(huiQiChessResult.getMoveChessC().substring(1, 3),
+                            huiQiChessResult.getMoveChessC().substring(0, 1));
+                    zhaDan.setShow(true);
+                    zhaDan.setP(huiQiChessResult.getStartP());
+                    Chess eated1 = new Chess(huiQiChessResult.getEatedChessC().substring(1, 3),
+                            huiQiChessResult.getEatedChessC().substring(0, 1));
+                    eated1.setShow(true);
+                    eated1.setP(huiQiChessResult.getEndP());
+                    chessList.add(zhaDan);
+                    chessList.add(eated1);
+                    culPlayer = changePlayer(culPlayer);//还是用之前的
+                    mainFrame.hintPanel.colorLabel.setText("该" + culPlayer.getColor() + "玩家走了\n");
+                }
+                else{
+                    Chess.getChessByPoint(huiQiChessResult.getEndP(), chessList).setP(huiQiChessResult.getStartP());
+                    //lastChess.setP(huiQiChessResult.getStartP());
+                    chessDao.deleteById(step--);
+                    Chess eated1 = new Chess(huiQiChessResult.getEatedChessC().substring(1, 3),
+                            huiQiChessResult.getEatedChessC().substring(0, 1));
+                    eated1.setP(huiQiChessResult.getEndP());
+                    System.out.println("637创建了" + eated1);
+                    chessList.add(eated1);
+                /*lastChess = Chess.getChessByPoint(huiQiChessResult.getStartP(), chessList);
+                lastChess.setP(huiQiChessResult.getStartP());*/
+                    eated1.setShow(true);
+                    culPlayer = changePlayer(culPlayer);//还是用之前的
+                    mainFrame.hintPanel.colorLabel.setText("该" + culPlayer.getColor() + "玩家走了\n");
+
+                }
+                repaint();
+            }
+        }else{
+            mainFrame.hintPanel.j1.setText("翻棋后无法悔棋");
+            mainFrame.hintPanel.j2.setText("");
+            mainFrame.hintPanel.j3.setText("");
+            mainFrame.hintPanel.j4.setText("");
+        }
+
     }
 }

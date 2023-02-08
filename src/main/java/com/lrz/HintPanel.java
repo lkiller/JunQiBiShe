@@ -104,6 +104,7 @@ public class HintPanel extends JPanel implements ActionListener {
         String actionCommand = e.getActionCommand();
         switch (actionCommand){
             case "huiQi":
+                mainFrame.myPanel.huiQi();
                 System.out.println("悔棋被点击");break;
             case "save":
                 System.out.println("保存被点击");break;

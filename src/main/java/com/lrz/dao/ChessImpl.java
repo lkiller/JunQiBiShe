@@ -5,5 +5,6 @@ import com.lrz.pojo.HuiQiChess;
 
 public interface ChessImpl {
     void insert(String name, HuiQiChess huiQiChess);
-    Chess selectStep();
+    HuiQiChess selectStep(int step);
+    int deleteById(int step);
 }

@@ -137,6 +137,37 @@ public class Chess implements com.lrz.Movable {
         this.color = color;
         this.level = level;
     }
+    public Chess(String name, String color){
+        switch (name){
+            case "司令": this.level = 9;break;
+            case "军长": this.level = 8;break;
+            case "师长": this.level = 7;break;
+            case "旅长": this.level = 6;break;
+            case "团长": this.level = 5;break;
+            case "营长": this.level = 4;break;
+            case "连长": this.level = 3;break;
+            case "排长": this.level = 2;break;
+            case "工兵": this.level = 1;break;
+            case "炸弹": this.level = 10;break;
+            case "地雷": this.level = 0;break;
+            case "军旗": this.level = -1;break;
+        }
+        this.name = name;
+        this.color = color;
+    }
+
+    @Override
+    public String toString() {
+        return "Chess{" +
+                "name='" + name + '\'' +
+                ", level=" + level +
+                ", color='" + color + '\'' +
+                ", show=" + show +
+                ", x=" + x +
+                ", y=" + y +
+                ", p=" + p +
+                '}';
+    }
 
     /**
      * 画出棋子

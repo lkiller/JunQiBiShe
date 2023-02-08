@@ -15,11 +15,10 @@ import org.apache.ibatis.session.ResultHandler;
 import org.apache.ibatis.session.SqlSession;
 
 public class ChessDao implements ChessImpl{
-
+    static SqlSession sqlSession =SqlSessionUtils.openSession();
     Chess chess = null;
     @Override
     public void insert(String name, HuiQiChess huiQiChess) {
-        SqlSession sqlSession =SqlSessionUtils.openSession();
         int insert = sqlSession.insert(name, huiQiChess);
         sqlSession.commit();
         System.out.println("chessDao插入数据库" + insert + "条记录");
@@ -27,12 +26,22 @@ public class ChessDao implements ChessImpl{
     }
 
     @Override
-    public Chess selectStep() {
-        return null;
+    public HuiQiChess selectStep(int step) {
+        Object selectByStep = sqlSession.selectOne("selectByStep",step);
+        return (HuiQiChess)selectByStep;
     }
+
+    @Override
+    public int deleteById(int step) {
+        int count = sqlSession.delete("deleteById", step);
+        System.out.println("ChessDao删除" + count + "条记录");
+        sqlSession.commit();
+        return count;
+    }
+
+
     public void start(){
-        SqlSession sqlSession =SqlSessionUtils.openSession();
-       sqlSession.select("start", (ResultHandler) chess);
+        sqlSession.delete("start");
         sqlSession.commit();
     }
 }
