@@ -55,32 +55,44 @@ public class Chess implements com.lrz.Movable {
     }
 
     public int getX() {
-            return MARGIN + (p.x - 1) * SPACEX;
+        return MARGIN + (p.x - 1) * SPACEX;
     }
 
     /**
      * 通过点击的像素位置获取棋子坐标
+     *
      * @param x
      * @param y
      * @return
      */
-    public static Point getPointFromXY(int x, int y){
+    public static Point getPointFromXY(int x, int y) {
         Point p = new Point();
         /*p.x  = (x - MARGIN) / SPACEX + 1;*/
-        if(y < 584){
-            p.y  = (y - MARGIN + 10) / SPACEY + 1;
-        }else{
+        if (y < 584) {
+            p.y = (y - MARGIN + 10) / SPACEY + 1;
+        } else {
             p.y = (y - MARGIN + 30) / SPACEY + 1;
         }
-        if(x >45 && x<142) {
+        if (x > 45 && x < 142) {
             p.x = 1;
             return p;
         }
-        if(x >193 && x<289){p.x = 2;return p;}
-        if(x >335 && x<438){p.x = 3;return p;}
-        if(x >480 && x<581){p.x = 4;return p;}
-        if(x >626 && x<724){p.x = 5;return p;}
-        else{
+        if (x > 193 && x < 289) {
+            p.x = 2;
+            return p;
+        }
+        if (x > 335 && x < 438) {
+            p.x = 3;
+            return p;
+        }
+        if (x > 480 && x < 581) {
+            p.x = 4;
+            return p;
+        }
+        if (x > 626 && x < 724) {
+            p.x = 5;
+            return p;
+        } else {
             return null;
         }
 
@@ -88,25 +100,27 @@ public class Chess implements com.lrz.Movable {
 
     /**
      * 绘制点击棋子的边框
+     *
      * @param g
      */
-    public void drawMargin(Graphics g){
-        g.fill3DRect(this.getX(), this.getY(), SIZEX/4, SIZEY/4,true);
+    public void drawMargin(Graphics g) {
+        g.fill3DRect(this.getX(), this.getY(), SIZEX / 4, SIZEY / 4, true);
     }
 
     /**
      * 通过坐标获取棋子
+     *
      * @param p
      * @param chessList
      * @return
      */
-    public static Chess getChessByPoint(Point p, ArrayList<Chess> chessList){
+    public static Chess getChessByPoint(Point p, ArrayList<Chess> chessList) {
         for (Chess chess : chessList) {
-            if(p.x == chess.getP().x && p.y == chess.getP().y){
+            if (p.x == chess.getP().x && p.y == chess.getP().y) {
                 return chess;
             }
         }
-       return null;
+        return null;
     }
 
     public void setX(int x) {
@@ -114,7 +128,7 @@ public class Chess implements com.lrz.Movable {
     }
 
     public int getY() {
-        if(p.y < 7)
+        if (p.y < 7)
             return MARGIN + (p.y - 1) * SPACEY;
         else
             return MARGIN - 15 + (p.y - 1) * SPACEY;
@@ -137,23 +151,90 @@ public class Chess implements com.lrz.Movable {
         this.color = color;
         this.level = level;
     }
-    public Chess(String name, String color){
-        switch (name){
-            case "司令": this.level = 9;break;
-            case "军长": this.level = 8;break;
-            case "师长": this.level = 7;break;
-            case "旅长": this.level = 6;break;
-            case "团长": this.level = 5;break;
-            case "营长": this.level = 4;break;
-            case "连长": this.level = 3;break;
-            case "排长": this.level = 2;break;
-            case "工兵": this.level = 1;break;
-            case "炸弹": this.level = 10;break;
-            case "地雷": this.level = 0;break;
-            case "军旗": this.level = -1;break;
+
+    public Chess(String name, String color) {
+        switch (name) {
+            case "司令":
+                this.level = 9;
+                break;
+            case "军长":
+                this.level = 8;
+                break;
+            case "师长":
+                this.level = 7;
+                break;
+            case "旅长":
+                this.level = 6;
+                break;
+            case "团长":
+                this.level = 5;
+                break;
+            case "营长":
+                this.level = 4;
+                break;
+            case "连长":
+                this.level = 3;
+                break;
+            case "排长":
+                this.level = 2;
+                break;
+            case "工兵":
+                this.level = 1;
+                break;
+            case "炸弹":
+                this.level = 10;
+                break;
+            case "地雷":
+                this.level = 0;
+                break;
+            case "军旗":
+                this.level = -1;
+                break;
         }
         this.name = name;
         this.color = color;
+    }
+
+    public Chess(String name) {
+        switch (name) {
+            case "司令":
+                this.level = 9;
+                break;
+            case "军长":
+                this.level = 8;
+                break;
+            case "师长":
+                this.level = 7;
+                break;
+            case "旅长":
+                this.level = 6;
+                break;
+            case "团长":
+                this.level = 5;
+                break;
+            case "营长":
+                this.level = 4;
+                break;
+            case "连长":
+                this.level = 3;
+                break;
+            case "排长":
+                this.level = 2;
+                break;
+            case "工兵":
+                this.level = 1;
+                break;
+            case "炸弹":
+                this.level = 10;
+                break;
+            case "地雷":
+                this.level = 0;
+                break;
+            case "军旗":
+                this.level = -1;
+                break;
+        }
+        this.name = name;
     }
 
     @Override
@@ -171,10 +252,11 @@ public class Chess implements com.lrz.Movable {
 
     /**
      * 画出棋子
+     *
      * @param g
      * @param jPanel
      */
-    public void draw(Graphics g, JPanel jPanel){
+    public void draw(Graphics g, JPanel jPanel) {
         String path = "lib\\" + color + this.name + ".png";
         Image image = Toolkit.getDefaultToolkit().getImage(path);
         g.drawImage(image, getX(), getY(), SIZEX, SIZEY, jPanel);
@@ -182,10 +264,11 @@ public class Chess implements com.lrz.Movable {
 
     /**
      * 画棋子背面
+     *
      * @param g
      * @param jPanel
      */
-    public void drawUnknown(Graphics g, JPanel jPanel){
+    public void drawUnknown(Graphics g, JPanel jPanel) {
         String path = "lib\\" + "Unknown.png";
         Image image = Toolkit.getDefaultToolkit().getImage(path);
         g.drawImage(image, getX(), getY(), SIZEX, SIZEY, jPanel);
@@ -193,24 +276,26 @@ public class Chess implements com.lrz.Movable {
 
     /**
      * 是否只能上下左右移动
+     *
      * @param startP
      * @param endP
      * @return
      */
-    public static boolean justUpDownLeftRight(Point startP, Point endP){
+    public static boolean justUpDownLeftRight(Point startP, Point endP) {
         return (Math.abs(startP.getX() - endP.getX()) + Math.abs(startP.getY() - endP.getY())) == 1;
     }
 
     /**
      * 行营中的棋子移动范围
+     *
      * @param startP
      * @param endP
      * @return
      */
-    public static boolean xingYing(Point startP, Point endP){
-        if(Math.abs(startP.getX() - endP.getX()) == 1 && Math.abs(startP.getY() - endP.getY())== 0) return true;
-        if(Math.abs(startP.getX() - endP.getX()) == 0 && Math.abs(startP.getY() - endP.getY())== 1) return true;
-        if(Math.abs(startP.getX() - endP.getX()) == 1 && Math.abs(startP.getY() - endP.getY())== 1)return true;
+    public static boolean xingYing(Point startP, Point endP) {
+        if (Math.abs(startP.getX() - endP.getX()) == 1 && Math.abs(startP.getY() - endP.getY()) == 0) return true;
+        if (Math.abs(startP.getX() - endP.getX()) == 0 && Math.abs(startP.getY() - endP.getY()) == 1) return true;
+        if (Math.abs(startP.getX() - endP.getX()) == 1 && Math.abs(startP.getY() - endP.getY()) == 1) return true;
         return false;
     }
 
@@ -219,6 +304,7 @@ public class Chess implements com.lrz.Movable {
      * 供司令、军长、师长、旅长、团长、营长、连长、排长、炸弹使用，
      * 地雷、军旗不可动
      * 工兵需要重写
+     *
      * @param startP
      * @param endP
      * @return
@@ -226,12 +312,12 @@ public class Chess implements com.lrz.Movable {
     @Override
     public boolean isAbleMove(Point startP, Point endP) {
         //行营
-        if((startP.getX() == 2 && startP.getY() == 3) || (startP.getX() == 4 && startP.getY() == 3)||
+        if ((startP.getX() == 2 && startP.getY() == 3) || (startP.getX() == 4 && startP.getY() == 3) ||
                 (startP.getX() == 3 && startP.getY() == 4) ||
-                (startP.getX() == 2 && startP.getY() == 5) || (startP.getX() == 4 && startP.getY() == 5)||
-                (startP.getX() == 2 && startP.getY() == 10) || (startP.getX() == 4 && startP.getY() == 10)||
+                (startP.getX() == 2 && startP.getY() == 5) || (startP.getX() == 4 && startP.getY() == 5) ||
+                (startP.getX() == 2 && startP.getY() == 10) || (startP.getX() == 4 && startP.getY() == 10) ||
                 (startP.getX() == 3 && startP.getY() == 11) ||
-                (startP.getX() == 2 && startP.getY() == 12) || (startP.getX() == 4 && startP.getY() == 12)){
+                (startP.getX() == 2 && startP.getY() == 12) || (startP.getX() == 4 && startP.getY() == 12)) {
             return xingYing(startP, endP);
         }
         //第一行以及最后一行
@@ -257,24 +343,24 @@ public class Chess implements com.lrz.Movable {
                     return true;
             }
             //第二行  第二个
-            else if(startP.getX() == 2) {
+            else if (startP.getX() == 2) {
                 //目标位置在第二行都可以
-                if(endP.getY() ==2 && endP.getX() != 2){
+                if (endP.getY() == 2 && endP.getX() != 2) {
                     return true;
                 }
                 //左边一个  下面一个 上面一个可以
-                if((endP.getX() == 2 && endP .getY() == 3)|| (endP.getX() == 2 && endP .getY() == 1)){
+                if ((endP.getX() == 2 && endP.getY() == 3) || (endP.getX() == 2 && endP.getY() == 1)) {
                     return true;
                 }
             }
             //第二行  第四个
-            else if(startP.getX() == 4) {
+            else if (startP.getX() == 4) {
                 //目标位置在第二行都可以
-                if(endP.getY() ==2 && endP.getX() != 4){
+                if (endP.getY() == 2 && endP.getX() != 4) {
                     return true;
                 }
                 //上面一个 下面一个可以
-                if((endP.getX() == 4 && endP .getY() == 1) || (endP.getX() == 4 && endP .getY() == 3)){
+                if ((endP.getX() == 4 && endP.getY() == 1) || (endP.getX() == 4 && endP.getY() == 3)) {
                     return true;
                 }
             }
@@ -286,7 +372,7 @@ public class Chess implements com.lrz.Movable {
                 if ((endP.getY() == 3 && endP.getX() == 2) || (endP.getY() == 3 && endP.getX() == 4)) {
                     return true;
                 }
-                if(endP.getY() == 2){
+                if (endP.getY() == 2) {
                     return true;
                 }
             }
@@ -326,24 +412,24 @@ public class Chess implements com.lrz.Movable {
                     return true;
             }
             //第十三行  第二个
-            else if(startP.getX() == 2) {
+            else if (startP.getX() == 2) {
                 //目标位置在第二行都可以
-                if(endP.getY() == 13 && endP.getX() != 2){
+                if (endP.getY() == 13 && endP.getX() != 2) {
                     return true;
                 }
                 //左边一个  上面一个 下面一个可以
-                if((endP.getX() == 2 && endP .getY() == 12) || (endP.getX() == 2 && endP .getY() == 14)){
+                if ((endP.getX() == 2 && endP.getY() == 12) || (endP.getX() == 2 && endP.getY() == 14)) {
                     return true;
                 }
             }
             //第十三行  第四个
-            else if(startP.getX() == 4) {
+            else if (startP.getX() == 4) {
                 //目标位置在第二行都可以
-                if(endP.getY() == 13 && endP.getX() != 4){
+                if (endP.getY() == 13 && endP.getX() != 4) {
                     return true;
                 }
                 //上面一个 下面一个可以
-                if((endP.getX() == 4 && endP .getY() == 12) || (endP.getX() == 4 && endP .getY() == 14)){
+                if ((endP.getX() == 4 && endP.getY() == 12) || (endP.getX() == 4 && endP.getY() == 14)) {
                     return true;
                 }
             }
@@ -355,7 +441,7 @@ public class Chess implements com.lrz.Movable {
                 if ((endP.getY() == 12 && endP.getX() == 2) || (endP.getY() == 12 && endP.getX() == 4)) {
                     return true;
                 }
-                if(endP.getY() == 13){
+                if (endP.getY() == 13) {
                     return true;
                 }
             }
@@ -378,333 +464,333 @@ public class Chess implements com.lrz.Movable {
         }
 
         //第三行不带行营
-        if(startP.getY() == 3){
+        if (startP.getY() == 3) {
             //第三行第三列
-            if(startP.getX() == 3){
+            if (startP.getX() == 3) {
                 return Chess.justUpDownLeftRight(startP, endP);
             }
             //第三行第一列
-            if(startP.getX() == 1){
-                if((endP.getX() == 1 && endP.getY() <= 6 && endP.getY() >= 2) ||
-                        (endP.getX() == 1 && endP.getY() <= 13 && endP.getY() >= 9)){
+            if (startP.getX() == 1) {
+                if ((endP.getX() == 1 && endP.getY() <= 6 && endP.getY() >= 2) ||
+                        (endP.getX() == 1 && endP.getY() <= 13 && endP.getY() >= 9)) {
                     return true;
                 }
-                if(endP.getY() == 3 && endP.getX() == 2){
+                if (endP.getY() == 3 && endP.getX() == 2) {
                     return true;
                 }
             }
             //第三行第五列
-            if(startP.getX() == 5){
-                if((endP.getX() == 5 && endP.getY() <= 6 && endP.getY() >= 2) ||
-                        (endP.getX() == 5 && endP.getY() <= 13 && endP.getY() >= 9)){
+            if (startP.getX() == 5) {
+                if ((endP.getX() == 5 && endP.getY() <= 6 && endP.getY() >= 2) ||
+                        (endP.getX() == 5 && endP.getY() <= 13 && endP.getY() >= 9)) {
                     return true;
                 }
-                if(endP.getY() == 3 && endP.getX() == 4){
+                if (endP.getY() == 3 && endP.getX() == 4) {
                     return true;
                 }
             }
         }
         //第十二行不带行营
-        if(startP.getY() == 12){
+        if (startP.getY() == 12) {
             //第十二行第三列
-            if(startP.getX() == 3){
+            if (startP.getX() == 3) {
                 return Chess.justUpDownLeftRight(startP, endP);
             }
             //第十二行第一列
-            if(startP.getX() == 1){
+            if (startP.getX() == 1) {
                 //可以在一列上行动
-                if((endP.getX() == 1 && endP.getY() <= 6 && endP.getY() >= 2) ||
-                        (endP.getX() == 1 && endP.getY() <= 13 && endP.getY() >= 9)){
+                if ((endP.getX() == 1 && endP.getY() <= 6 && endP.getY() >= 2) ||
+                        (endP.getX() == 1 && endP.getY() <= 13 && endP.getY() >= 9)) {
                     return true;
                 }
                 //可进行营
-                if(endP.getY() == 12 && endP.getX() == 2){
+                if (endP.getY() == 12 && endP.getX() == 2) {
                     return true;
                 }
             }
             //第十二行第五列
-            if(startP.getX() == 5){
-                if((endP.getX() == 5 && endP.getY() <= 6 && endP.getY() >= 2) ||
-                        (endP.getX() == 5 && endP.getY() <= 13 && endP.getY() >= 9)){
+            if (startP.getX() == 5) {
+                if ((endP.getX() == 5 && endP.getY() <= 6 && endP.getY() >= 2) ||
+                        (endP.getX() == 5 && endP.getY() <= 13 && endP.getY() >= 9)) {
                     return true;
                 }
-                if(endP.getY() == 12 && endP.getX() == 4){
+                if (endP.getY() == 12 && endP.getX() == 4) {
                     return true;
                 }
             }
         }
 
         //第四行不带行营
-        if(startP.getY() == 4){
+        if (startP.getY() == 4) {
             //第四行第一列
-            if((startP.getX() == 1)){
-                if((endP.getX() == 1 && endP.getY() <= 6 && endP.getY() >= 2) ||
-                        (endP.getX() == 1 && endP.getY() <= 13 && endP.getY() >= 9)){
+            if ((startP.getX() == 1)) {
+                if ((endP.getX() == 1 && endP.getY() <= 6 && endP.getY() >= 2) ||
+                        (endP.getX() == 1 && endP.getY() <= 13 && endP.getY() >= 9)) {
                     return true;
                 }
                 //可进上下两个斜着的行营
-                if((endP.getY() == 3 || endP.getY() == 5) && endP.getX() == 2){
+                if ((endP.getY() == 3 || endP.getY() == 5) && endP.getX() == 2) {
                     return true;
                 }
                 //右边一个
-                if(endP.getX() == 2 && endP.getY() == 4)
+                if (endP.getX() == 2 && endP.getY() == 4)
                     return true;
             }
             //第四行 第二列第四列
-            if(startP.getX() == 2 || startP.getX() == 4){
+            if (startP.getX() == 2 || startP.getX() == 4) {
                 return Chess.justUpDownLeftRight(startP, endP);
             }
             //第四行第五列
-            if(startP.getX() == 5){
-                if((endP.getX() == 5 && endP.getY() <= 6 && endP.getY() >= 2) ||
-                        (endP.getX() == 5 && endP.getY() <= 13 && endP.getY() >= 9)){
+            if (startP.getX() == 5) {
+                if ((endP.getX() == 5 && endP.getY() <= 6 && endP.getY() >= 2) ||
+                        (endP.getX() == 5 && endP.getY() <= 13 && endP.getY() >= 9)) {
                     return true;
                 }
                 //可进上下两个斜着的行营
-                if((endP.getY() == 3 || endP.getY() == 5) && endP.getX() == 4){
+                if ((endP.getY() == 3 || endP.getY() == 5) && endP.getX() == 4) {
                     return true;
                 }
                 //左边一个
-                if(endP.getX() == 4 && endP.getY() == 4)
+                if (endP.getX() == 4 && endP.getY() == 4)
                     return true;
 
             }
         }
         //第十一行不带行营
-        if(startP.getY() == 11){
+        if (startP.getY() == 11) {
             //第十一行第一列
-            if((startP.getX() == 1)){
-                if((endP.getX() == 1 && endP.getY() <= 6 && endP.getY() >= 2) ||
-                        (endP.getX() == 1 && endP.getY() <= 13 && endP.getY() >= 9)){
+            if ((startP.getX() == 1)) {
+                if ((endP.getX() == 1 && endP.getY() <= 6 && endP.getY() >= 2) ||
+                        (endP.getX() == 1 && endP.getY() <= 13 && endP.getY() >= 9)) {
                     return true;
                 }
                 //可进上下两个斜着的行营
-                if((endP.getY() == 10 || endP.getY() == 12) && endP.getX() == 2){
+                if ((endP.getY() == 10 || endP.getY() == 12) && endP.getX() == 2) {
                     return true;
                 }
                 //右边一个
-                if(endP.getX() == 2 && endP.getY() == 11)
+                if (endP.getX() == 2 && endP.getY() == 11)
                     return true;
             }
             //第十一行 第二列第四列
-            if(startP.getX() == 2 || startP.getX() == 4){
+            if (startP.getX() == 2 || startP.getX() == 4) {
                 return Chess.justUpDownLeftRight(startP, endP);
             }
             //第十一行第五列
-            if(startP.getX() == 5){
-                if((endP.getX() == 5 && endP.getY() <= 6 && endP.getY() >= 2) ||
-                        (endP.getX() == 5 && endP.getY() <= 13 && endP.getY() >= 9)){
+            if (startP.getX() == 5) {
+                if ((endP.getX() == 5 && endP.getY() <= 6 && endP.getY() >= 2) ||
+                        (endP.getX() == 5 && endP.getY() <= 13 && endP.getY() >= 9)) {
                     return true;
                 }
                 //可进上下两个斜着的行营
-                if((endP.getY() == 10 || endP.getY() == 12) && endP.getX() == 4){
+                if ((endP.getY() == 10 || endP.getY() == 12) && endP.getX() == 4) {
                     return true;
                 }
                 //左边一个
-                if(endP.getX() == 4 && endP.getY() == 11)
+                if (endP.getX() == 4 && endP.getY() == 11)
                     return true;
             }
         }
 
 
         //第五行不带行营
-        if (startP.getY() == 5){
+        if (startP.getY() == 5) {
             //第五行第三列
-            if(startP.getX() == 3){
-                return Chess.justUpDownLeftRight(startP,endP);
+            if (startP.getX() == 3) {
+                return Chess.justUpDownLeftRight(startP, endP);
             }
             //第五行第一列
-            if(startP.getX() == 1){
-                if((endP.getX() == 1 && endP.getY()<= 13 && endP.getY() >= 9)||
-                        (endP.getX() == 1 && endP.getY()<= 6 && endP.getY() >=2)){
+            if (startP.getX() == 1) {
+                if ((endP.getX() == 1 && endP.getY() <= 13 && endP.getY() >= 9) ||
+                        (endP.getX() == 1 && endP.getY() <= 6 && endP.getY() >= 2)) {
                     return true;
                 }
                 //可进行营
-                if(endP.getY() == 5 && endP.getX() == 2){
+                if (endP.getY() == 5 && endP.getX() == 2) {
                     return true;
                 }
             }
             //第五行第五列
-            if(startP.getX() == 5){
-                if((endP.getX() == 5 && endP.getY() <= 6 && endP.getY() >= 2) ||
-                        (endP.getX() == 5 && endP.getY() <= 13 && endP.getY() >= 9)){
+            if (startP.getX() == 5) {
+                if ((endP.getX() == 5 && endP.getY() <= 6 && endP.getY() >= 2) ||
+                        (endP.getX() == 5 && endP.getY() <= 13 && endP.getY() >= 9)) {
                     return true;
                 }
                 //可进行营
-                if(endP.getY() == 5 && endP.getX() == 4){
+                if (endP.getY() == 5 && endP.getX() == 4) {
                     return true;
                 }
             }
         }
         //第十行不带行营
-        if (startP.getY() == 10){
+        if (startP.getY() == 10) {
             //第十行第三列
-            if(startP.getX() == 3){
-                return Chess.justUpDownLeftRight(startP,endP);
+            if (startP.getX() == 3) {
+                return Chess.justUpDownLeftRight(startP, endP);
             }
             //第十行第一列
-            if(startP.getX() == 1){
-                if((endP.getX() == 1 && endP.getY()<= 13 && endP.getY() >= 9)||
-                        (endP.getX() == 1 && endP.getY()<= 6 && endP.getY() >=2)){
+            if (startP.getX() == 1) {
+                if ((endP.getX() == 1 && endP.getY() <= 13 && endP.getY() >= 9) ||
+                        (endP.getX() == 1 && endP.getY() <= 6 && endP.getY() >= 2)) {
                     return true;
                 }
                 //可进行营
-                if(endP.getY() == 10 && endP.getX() == 2){
+                if (endP.getY() == 10 && endP.getX() == 2) {
                     return true;
                 }
             }
             //第十行第五列
-            if(startP.getX() == 5){
-                if((endP.getX() == 5 && endP.getY() <= 6 && endP.getY() >= 2) ||
-                        (endP.getX() == 5 && endP.getY() <= 13 && endP.getY() >= 9)){
+            if (startP.getX() == 5) {
+                if ((endP.getX() == 5 && endP.getY() <= 6 && endP.getY() >= 2) ||
+                        (endP.getX() == 5 && endP.getY() <= 13 && endP.getY() >= 9)) {
                     return true;
                 }
                 //可进行营
-                if(endP.getY() == 10 && endP.getX() == 4){
+                if (endP.getY() == 10 && endP.getX() == 4) {
                     return true;
                 }
             }
         }
 
         //第六行不带行营
-        if(startP.getY() == 6){
+        if (startP.getY() == 6) {
             //第六行第一列
-            if(startP.getX() == 1){
-                if((endP.getX() == 1 && endP.getY() >= 2 && endP.getY() <= 5)  ||
+            if (startP.getX() == 1) {
+                if ((endP.getX() == 1 && endP.getY() >= 2 && endP.getY() <= 5) ||
                         (endP.getX() == 1 && endP.getY() >= 9 && endP.getY() <= 13))
                     return true;
-                if(endP.getY() == 6 && endP.getX() >= 2 && endP.getX() <= 5 ){
+                if (endP.getY() == 6 && endP.getX() >= 2 && endP.getX() <= 5) {
                     return true;
                 }
-                if(endP.getX() == 2 && endP.getY() == 5){
+                if (endP.getX() == 2 && endP.getY() == 5) {
                     return true;
                 }
             }
             //第六行第二列{
-            if(startP.getX() == 2){
+            if (startP.getX() == 2) {
                 //可进行营和左边一个
-                if((endP.getX() == 2 && endP.getY() == 5) || (endP.getX() == 1 && endP.getY() == 6)){
+                if ((endP.getX() == 2 && endP.getY() == 5) || (endP.getX() == 1 && endP.getY() == 6)) {
                     return true;
                 }
                 //可向右
-                if(endP.getY() == 6 && endP.getX() >= 2 && endP.getX() <= 5){
+                if (endP.getY() == 6 && endP.getX() >= 2 && endP.getX() <= 5) {
                     return true;
                 }
             }
             //第六行第三列
-            if(startP.getX() == 3){
+            if (startP.getX() == 3) {
                 //可进行营
-                if((endP.getX() == 2 && endP.getY() == 5) || (endP.getX() == 4 && endP.getY() == 5)) {
+                if ((endP.getX() == 2 && endP.getY() == 5) || (endP.getX() == 4 && endP.getY() == 5)) {
                     return true;
                 }
                 //可向左向右
-                if(endP.getY() == 6 && (endP.getX() == 1 || endP.getX() == 2 || endP.getX() == 4 ||endP.getX() == 5)){
+                if (endP.getY() == 6 && (endP.getX() == 1 || endP.getX() == 2 || endP.getX() == 4 || endP.getX() == 5)) {
                     return true;
                 }
                 //可向上向下
-                if(endP.getY() == 9 && endP.getX() == 3){
+                if (endP.getY() == 9 && endP.getX() == 3) {
                     return true;
                 }
-                if(endP.getY() == 5 && endP.getX() == 3){
+                if (endP.getY() == 5 && endP.getX() == 3) {
                     return true;
                 }
             }
             //第六行第四列{
-            if(startP.getX() == 4){
+            if (startP.getX() == 4) {
                 //可进行营和右边一个
-                if((endP.getX() == 4 && endP.getY() == 5) || (endP.getX() == 5 && endP.getY() == 6)){
+                if ((endP.getX() == 4 && endP.getY() == 5) || (endP.getX() == 5 && endP.getY() == 6)) {
                     return true;
                 }
                 //可向左三个
-                if(endP.getY() == 6 && endP.getX() >= 1 && endP.getX() <= 3){
+                if (endP.getY() == 6 && endP.getX() >= 1 && endP.getX() <= 3) {
                     return true;
                 }
             }
             //第六行第五列
-            if(startP.getX() == 5){
+            if (startP.getX() == 5) {
                 //可以向上向下
-                if((endP.getX() == 5 && endP.getY() >= 2 && endP.getY() <= 5)  ||
+                if ((endP.getX() == 5 && endP.getY() >= 2 && endP.getY() <= 5) ||
                         (endP.getX() == 5 && endP.getY() >= 9 && endP.getY() <= 13))
                     return true;
                 //可以向左向右
-                if(endP.getY() == 6 && endP.getX() >= 1 && endP.getX() <= 4 ){
+                if (endP.getY() == 6 && endP.getX() >= 1 && endP.getX() <= 4) {
                     return true;
                 }
                 //可进行营
-                if(endP.getX() == 4 && endP.getY() == 5){
+                if (endP.getX() == 4 && endP.getY() == 5) {
                     return true;
                 }
             }
         }
         //第九行不带行营
-        if(startP.getY() == 9){
+        if (startP.getY() == 9) {
             //第九行第一列
-            if(startP.getX() == 1){
+            if (startP.getX() == 1) {
                 //可向上向下
-                if((endP.getX() == 1 && endP.getY() >= 2 && endP.getY() <= 6)  ||
+                if ((endP.getX() == 1 && endP.getY() >= 2 && endP.getY() <= 6) ||
                         (endP.getX() == 1 && endP.getY() >= 10 && endP.getY() <= 13))
                     return true;
                 //可向右
-                if(endP.getY() == 9 && endP.getX() >= 2 && endP.getX() <= 5 ){
+                if (endP.getY() == 9 && endP.getX() >= 2 && endP.getX() <= 5) {
                     return true;
                 }
                 //可进行营
-                if(endP.getX() == 2 && endP.getY() == 10){
+                if (endP.getX() == 2 && endP.getY() == 10) {
                     return true;
                 }
             }
             //第九行第二列{
-            if(startP.getX() == 2){
+            if (startP.getX() == 2) {
                 //可进行营和左边一个
-                if((endP.getX() == 2 && endP.getY() == 10) || (endP.getX() == 1 && endP.getY() == 9)){
+                if ((endP.getX() == 2 && endP.getY() == 10) || (endP.getX() == 1 && endP.getY() == 9)) {
                     return true;
                 }
                 //可向右
-                if(endP.getY() == 9 && endP.getX() >= 2 && endP.getX() <= 5){
+                if (endP.getY() == 9 && endP.getX() >= 2 && endP.getX() <= 5) {
                     return true;
                 }
             }
             //第九行第三列
-            if(startP.getX() == 3){
+            if (startP.getX() == 3) {
                 //可进行营
-                if((endP.getX() == 2 && endP.getY() == 10) || (endP.getX() == 4 && endP.getY() == 10)) {
+                if ((endP.getX() == 2 && endP.getY() == 10) || (endP.getX() == 4 && endP.getY() == 10)) {
                     return true;
                 }
                 //可向左向右
-                if(endP.getY() == 9 && (endP.getX() == 1 || endP.getX() == 2 || endP.getX() == 4 ||endP.getX() == 5)){
+                if (endP.getY() == 9 && (endP.getX() == 1 || endP.getX() == 2 || endP.getX() == 4 || endP.getX() == 5)) {
                     return true;
                 }
                 //可向上
-                if(endP.getY() == 6 && endP.getX() == 3){
+                if (endP.getY() == 6 && endP.getX() == 3) {
                     return true;
                 }
-                if(endP.getY() == 10 && endP.getX() == 3){
+                if (endP.getY() == 10 && endP.getX() == 3) {
                     return true;
                 }
             }
             //第九行第四列{
-            if(startP.getX() == 4){
+            if (startP.getX() == 4) {
                 //可进行营和右边一个
-                if((endP.getX() == 4 && endP.getY() == 10) || (endP.getX() == 5 && endP.getY() == 9)){
+                if ((endP.getX() == 4 && endP.getY() == 10) || (endP.getX() == 5 && endP.getY() == 9)) {
                     return true;
                 }
                 //可向左三个
-                if(endP.getY() == 9 && endP.getX() >= 1 && endP.getX() <= 3){
+                if (endP.getY() == 9 && endP.getX() >= 1 && endP.getX() <= 3) {
                     return true;
                 }
             }
             //第九行第五列
-            if(startP.getX() == 5){
+            if (startP.getX() == 5) {
                 //可以向上向下
-                if((endP.getX() == 5 && endP.getY() >= 2 && endP.getY() <= 6)  ||
+                if ((endP.getX() == 5 && endP.getY() >= 2 && endP.getY() <= 6) ||
                         (endP.getX() == 5 && endP.getY() >= 10 && endP.getY() <= 13))
                     return true;
                 //可以向左向右
-                if(endP.getY() == 9 && endP.getX() >= 1 && endP.getX() <= 4 ){
+                if (endP.getY() == 9 && endP.getX() >= 1 && endP.getX() <= 4) {
                     return true;
                 }
                 //可进行营
-                if(endP.getX() == 4 && endP.getY() == 10){
+                if (endP.getX() == 4 && endP.getY() == 10) {
                     return true;
                 }
             }
@@ -716,50 +802,51 @@ public class Chess implements com.lrz.Movable {
      * 判断移动或吃子的过程中，是否有其他棋子遮挡
      * 供司令、军长、师长、旅长、团长、营长、连长、排长、炸弹使用
      * 工兵需要重写
+     *
      * @param startP
      * @param endP
      * @param myPanel
      * @return
      */
-    public boolean hasNoOtherChess(Point startP, Point endP, com.lrz.MyPanel myPanel){
+    public boolean hasNoOtherChess(Point startP, Point endP, com.lrz.MyPanel myPanel) {
         int startX = (int) startP.getX();
         int startY = (int) startP.getY();
         int endX = (int) endP.getX();
         int endY = (int) endP.getY();
         boolean flag = true;//表示没有棋子遮挡
         //在y轴从上往下移动
-        if(startX == endX && startY < endY){
-            for (int i = startY + 1; i < endY; i++){
+        if (startX == endX && startY < endY) {
+            for (int i = startY + 1; i < endY; i++) {
                 //中间有棋子
-                if(Chess.getChessByPoint(new Point(startX, i), myPanel.chessList) != null){
+                if (Chess.getChessByPoint(new Point(startX, i), myPanel.chessList) != null) {
                     flag = false;
                     break;
                 }
             }
         }
         //在y轴从下往上移动
-        if(startX == endX && startY > endY){
-            for (int i = startY -1 ; i > endY; i--){
+        if (startX == endX && startY > endY) {
+            for (int i = startY - 1; i > endY; i--) {
                 //中间有棋子
-                if(Chess.getChessByPoint(new Point(startX, i), myPanel.chessList) != null){
+                if (Chess.getChessByPoint(new Point(startX, i), myPanel.chessList) != null) {
                     flag = false;
                     break;
                 }
             }
         }
         //在x轴从左向右移动
-        if(startY == endY && startX < endX){
-            for (int i = startX + 1; i < endX; i++){
-                if(Chess.getChessByPoint(new Point(i, startY), myPanel.chessList) != null){
+        if (startY == endY && startX < endX) {
+            for (int i = startX + 1; i < endX; i++) {
+                if (Chess.getChessByPoint(new Point(i, startY), myPanel.chessList) != null) {
                     flag = false;
                     break;
                 }
             }
         }
         //在x轴从右向做移动
-        if(startY == endY && startX > endX){
-            for(int i = startX - 1; i > endX; i--){
-                if(Chess.getChessByPoint(new Point(i, startY), myPanel.chessList) != null){
+        if (startY == endY && startX > endX) {
+            for (int i = startX - 1; i > endX; i--) {
+                if (Chess.getChessByPoint(new Point(i, startY), myPanel.chessList) != null) {
                     flag = false;
                     break;
                 }
@@ -770,41 +857,42 @@ public class Chess implements com.lrz.Movable {
 
     /**
      * 判断棋子是否在行营中
+     *
      * @param chess
      * @return
      */
-    public static boolean isAtXingYing(Chess chess){
+    public static boolean isAtXingYing(Chess chess) {
         Point p = chess.getP();
-        int X  = p.x;
-        int Y  = p.y;
-        if(X == 2 && Y == 3){
+        int X = p.x;
+        int Y = p.y;
+        if (X == 2 && Y == 3) {
             return true;
         }
-        if(X == 4 && Y == 3){
+        if (X == 4 && Y == 3) {
             return true;
         }
-        if(X == 2 && Y == 5){
+        if (X == 2 && Y == 5) {
             return true;
         }
-        if(X == 4 && Y == 5){
+        if (X == 4 && Y == 5) {
             return true;
         }
-        if(X == 2 && Y == 10){
+        if (X == 2 && Y == 10) {
             return true;
         }
-        if(X == 2 && Y == 12){
+        if (X == 2 && Y == 12) {
             return true;
         }
-        if(X == 4 && Y == 10){
+        if (X == 4 && Y == 10) {
             return true;
         }
-        if(X == 4 && Y == 12){
+        if (X == 4 && Y == 12) {
             return true;
         }
-        if(X == 3 && Y == 11){
+        if (X == 3 && Y == 11) {
             return true;
         }
-        if(X == 3 && Y == 4){
+        if (X == 3 && Y == 4) {
             return true;
         }
         return false;

@@ -4,12 +4,14 @@ import com.lrz.ChessSon.*;
 import com.lrz.Frame.MainFrame;
 import com.lrz.dao.ChessDao;
 import com.lrz.pojo.HuiQiChess;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.LinkedList;
 
 
 /**
@@ -18,8 +20,8 @@ import java.util.Collections;
  * @time 2023/1/3 17:12
  */
 public class MyPanel extends JPanel {
+    LinkedList<HuiQiChess> huiQiChessLinkedList = new LinkedList<>();//用来存储每一步走的棋子
     public HuiQiChess huiQiChess;
-
     private int step = 0;
     MainFrame mainFrame = null;
     public ArrayList<Chess> chessList = new ArrayList<Chess>();
@@ -38,7 +40,7 @@ public class MyPanel extends JPanel {
     boolean BlueDiLeiIsOver = false;
     boolean isInited = false;
     boolean cancelSelect = false;
-    ChessDao chessDao = new ChessDao();
+    //ChessDao chessDao = new ChessDao();
 
     @Override
     public void paint(Graphics g) {
@@ -64,7 +66,7 @@ public class MyPanel extends JPanel {
     }
 
     public MyPanel(MainFrame mainFrame) {
-        chessDao.start();
+        //chessDao.start();
         this.mainFrame = mainFrame;
         createChess();
         addMouseListener(new MouseAdapter() {
@@ -142,7 +144,8 @@ public class MyPanel extends JPanel {
                     huiQiChess = new HuiQiChess(++step, culPlayer.getColor(), p, null, selectedChess, null, false);
                     huiQiChess.setCanHuiQi(false);//不可以悔棋
                     lastChess = selectedChess;
-                    chessDao.insert("addStep", huiQiChess);
+                    //chessDao.insert("addStep", huiQiChess);
+                    huiQiChessLinkedList.add(huiQiChess);
                     culPlayer = changePlayer(culPlayer);
                     //System.out.println("该" + culPlayer.getColor() +  "玩家走了\n" );
                     mainFrame.hintPanel.colorLabel.setText("该" + culPlayer.getColor() + "玩家走了\n");
@@ -159,7 +162,7 @@ public class MyPanel extends JPanel {
             }
             //第n次点击棋盘
             else {
-                System.out.println("159行startp坐标" + selectedChess.getP().x+ " ," + selectedChess.getP().y);
+                System.out.println("159行startp坐标" + selectedChess.getP().x + " ," + selectedChess.getP().y);
                 Point startP = selectedChess.getP();
 
                 c1 = Chess.getChessByPoint(p, chessList);
@@ -192,7 +195,8 @@ public class MyPanel extends JPanel {
                     mainFrame.hintPanel.j3.setText(culPlayer.getColor() + "方移动了" + selectedChess.getColor() + selectedChess.getName());
                     //移动过后换玩家
                     huiQiChess = new HuiQiChess(++step, culPlayer.getColor(), startP, p, selectedChess, null, true);
-                    chessDao.insert("addStep", huiQiChess);
+                    //chessDao.insert("addStep", huiQiChess);
+                    huiQiChessLinkedList.add(huiQiChess);
                     lastChess = selectedChess;
                     culPlayer = changePlayer(culPlayer);
                     //System.out.println("该" + culPlayer.getColor() +  "玩家走了\n" );
@@ -273,7 +277,8 @@ public class MyPanel extends JPanel {
                                     selectedChess.setP(p);
                                 }
                                 huiQiChess = new HuiQiChess(++step, culPlayer.getColor(), startP, p, selectedChess, eated, true);
-                                chessDao.insert("addStep", huiQiChess);
+                                //chessDao.insert("addStep", huiQiChess);
+                                huiQiChessLinkedList.add(huiQiChess);
                                 lastChess = selectedChess;
                                 culPlayer = changePlayer(culPlayer);
                                 //System.out.println("该" + culPlayer.getColor() +  "玩家走了\n" );
@@ -293,7 +298,8 @@ public class MyPanel extends JPanel {
                                 }
                                 huiQiChess = new HuiQiChess(++step, culPlayer.getColor(), startP, p, selectedChess, eated, true);
                                 lastChess = selectedChess;
-                                chessDao.insert("addStep", huiQiChess);
+                                //chessDao.insert("addStep", huiQiChess);
+                                huiQiChessLinkedList.add(huiQiChess);
                                 culPlayer = changePlayer(culPlayer);
                                 //System.out.println("该" + culPlayer.getColor() +  "玩家走了\n" );
                                 mainFrame.hintPanel.colorLabel.setText("该" + culPlayer.getColor() + "玩家走了\n");
@@ -302,7 +308,8 @@ public class MyPanel extends JPanel {
                             else if (selectedChess.getLevel() == eated.getLevel() && !Chess.isAtXingYing(eated)) {
                                 huiQiChess = new HuiQiChess(++step, culPlayer.getColor(), startP, p, selectedChess, eated, true);
                                 lastChess = selectedChess;
-                                chessDao.insert("addStep", huiQiChess);
+                                //chessDao.insert("addStep", huiQiChess);
+                                huiQiChessLinkedList.add(huiQiChess);
                                 System.out.println("同归于尽");
                                 boolean remove1 = chessList.remove(selectedChess);
                                 boolean remove2 = chessList.remove(eated);
@@ -333,7 +340,8 @@ public class MyPanel extends JPanel {
                                     selectedChess.setP(p);
                                     huiQiChess = new HuiQiChess(++step, culPlayer.getColor(), startP, p, selectedChess, eated, true);
                                     lastChess = selectedChess;
-                                    chessDao.insert("addStep", huiQiChess);
+                                    //chessDao.insert("addStep", huiQiChess);
+                                    huiQiChessLinkedList.add(huiQiChess);
                                     culPlayer = changePlayer(culPlayer);
                                     mainFrame.hintPanel.colorLabel.setText("该" + culPlayer.getColor() + "玩家走了\n");
                                     System.out.println("吃子成功");
@@ -615,70 +623,72 @@ public class MyPanel extends JPanel {
         this.step = step;
     }
 
-    public void huiQi(){
+    public void huiQi() {
         int temp = step;
-        HuiQiChess huiQiChessResult = chessDao.selectStep(temp);
-        System.out.println("查询step" + step);
-        System.out.println(huiQiChessResult);
-        if(huiQiChessResult.isCanHuiQi()){
-            System.out.println(huiQiChessResult.getEatedChessC());
-            if( "空".equals(huiQiChessResult.getEatedChessC()) ){//即没有吃子
-                //lastChess.setP(huiQiChessResult.getStartP());
-                Chess.getChessByPoint(huiQiChessResult.getEndP(), chessList).setP(huiQiChessResult.getStartP());
-                chessDao.deleteById(step--);
+        HuiQiChess huiQiChess = huiQiChessLinkedList.getLast();
+        if (huiQiChess.isCanHuiQi()) {
+            if (huiQiChess.getEatedChess() == null) {//即没有吃子
+                Chess.getChessByPoint(huiQiChess.getEndP(), chessList).setP(huiQiChess.getStartP());
                 culPlayer = changePlayer(culPlayer);//还是用之前的
                 mainFrame.hintPanel.colorLabel.setText("该" + culPlayer.getColor() + "玩家走了\n");
-                selectedChess = lastChess;//悔棋过后，selectChess需要变成lastChess？？是吗
+                huiQiChessLinkedList.removeLast();
+                //selectedChess = lastChess;//悔棋过后，selectChess需要变成lastChess？？是吗
                 repaint();
-            }else{//有吃子情况
+            } else {//有吃子情况
                 //别人炸炸弹
-                if("炸弹".equals(huiQiChessResult.getEatedChessC().substring(1, 3)) ){
-                    Chess zhaDan = new Chess(huiQiChessResult.getEatedChessC().substring(1, 3),
-                            huiQiChessResult.getEatedChessC().substring(0, 1));
+                //System.out.println(huiQiChess.getMoveChess().getName());
+                if ("炸弹".equals(huiQiChess.getMoveChess().getName())) {
+                    Chess zhaDan = new Chess(huiQiChess.getEatedChess().getName(), huiQiChess.getEatedChess().getColor());
                     zhaDan.setShow(true);
-                    zhaDan.setP(huiQiChessResult.getEndP());
-                    Chess moveChess = new Chess(huiQiChessResult.getMoveChessC().substring(1, 3),
-                            huiQiChessResult.getMoveChessC().substring(0, 1));
-                    moveChess.setP(huiQiChessResult.getStartP());
+                    zhaDan.setP(huiQiChess.getEndP());
+                    Chess moveChess = new Chess(huiQiChess.getMoveChess().getName(), huiQiChess.getMoveChess().getColor());
+                    moveChess.setP(huiQiChess.getStartP());
                     moveChess.setShow(true);
+                    huiQiChessLinkedList.removeLast();
                     chessList.add(zhaDan);
                     chessList.add(moveChess);
                     culPlayer = changePlayer(culPlayer);//还是用之前的
                     mainFrame.hintPanel.colorLabel.setText("该" + culPlayer.getColor() + "玩家走了\n");
                     //炸弹炸别人
-                }else if("炸弹".equals(huiQiChessResult.getMoveChessC().substring(1, 3))){
-                    Chess zhaDan = new Chess(huiQiChessResult.getMoveChessC().substring(1, 3),
-                            huiQiChessResult.getMoveChessC().substring(0, 1));
+                }
+                else if ("炸弹".equals(huiQiChess.getEatedChess().getName())) {
+                    Chess zhaDan = new Chess(huiQiChess.getMoveChess().getName(), huiQiChess.getMoveChess().getColor());
                     zhaDan.setShow(true);
-                    zhaDan.setP(huiQiChessResult.getStartP());
-                    Chess eated1 = new Chess(huiQiChessResult.getEatedChessC().substring(1, 3),
-                            huiQiChessResult.getEatedChessC().substring(0, 1));
+                    zhaDan.setP(huiQiChess.getStartP());
+                    Chess eated1 = new Chess(huiQiChess.getEatedChess().getName(), huiQiChess.getEatedChess().getColor());
                     eated1.setShow(true);
-                    eated1.setP(huiQiChessResult.getEndP());
+                    eated1.setP(huiQiChess.getEndP());
+                    huiQiChessLinkedList.removeLast();
                     chessList.add(zhaDan);
                     chessList.add(eated1);
                     culPlayer = changePlayer(culPlayer);//还是用之前的
                     mainFrame.hintPanel.colorLabel.setText("该" + culPlayer.getColor() + "玩家走了\n");
                 }
-                else{
-                    Chess.getChessByPoint(huiQiChessResult.getEndP(), chessList).setP(huiQiChessResult.getStartP());
-                    //lastChess.setP(huiQiChessResult.getStartP());
-                    chessDao.deleteById(step--);
-                    Chess eated1 = new Chess(huiQiChessResult.getEatedChessC().substring(1, 3),
-                            huiQiChessResult.getEatedChessC().substring(0, 1));
-                    eated1.setP(huiQiChessResult.getEndP());
-                    System.out.println("637创建了" + eated1);
-                    chessList.add(eated1);
-                /*lastChess = Chess.getChessByPoint(huiQiChessResult.getStartP(), chessList);
-                lastChess.setP(huiQiChessResult.getStartP());*/
-                    eated1.setShow(true);
-                    culPlayer = changePlayer(culPlayer);//还是用之前的
-                    mainFrame.hintPanel.colorLabel.setText("该" + culPlayer.getColor() + "玩家走了\n");
-
+                else {
+                    if(huiQiChess.getEatedChess().getName().equals(huiQiChess.getMoveChess().getName())){//同归于尽情况
+                        Chess moveChess = new Chess(huiQiChess.getMoveChess().getName(), huiQiChess.getMoveChess().getColor());
+                        Chess eatedChess = new Chess(huiQiChess.getEatedChess().getName(), huiQiChess.getEatedChess().getColor());
+                        moveChess.setShow(true);eatedChess.setShow(true);
+                        moveChess.setP(huiQiChess.getMoveChess().getP());
+                        eatedChess.setP(huiQiChess.getEatedChess().getP());
+                        chessList.add(moveChess);
+                        chessList.add(eatedChess);
+                        culPlayer = changePlayer(culPlayer);//还是用之前的
+                        mainFrame.hintPanel.colorLabel.setText("该" + culPlayer.getColor() + "玩家走了\n");
+                    }else{
+                        Chess.getChessByPoint(huiQiChess.getEndP(), chessList).setP(huiQiChess.getStartP());
+                        Chess eated1 = new Chess(huiQiChess.getEatedChess().getName(), huiQiChess.getEatedChess().getColor());
+                        eated1.setP(huiQiChess.getEndP());
+                        huiQiChessLinkedList.removeLast();
+                        eated1.setShow(true);
+                        chessList.add(eated1);
+                        culPlayer = changePlayer(culPlayer);//还是用之前的
+                        mainFrame.hintPanel.colorLabel.setText("该" + culPlayer.getColor() + "玩家走了\n");
+                    }
                 }
                 repaint();
             }
-        }else{
+        } else {
             mainFrame.hintPanel.j1.setText("翻棋后无法悔棋");
             mainFrame.hintPanel.j2.setText("");
             mainFrame.hintPanel.j3.setText("");
