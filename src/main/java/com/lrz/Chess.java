@@ -1,7 +1,12 @@
 package com.lrz;
 
+import com.lrz.ChessSon.*;
+import com.lrz.panel.MyPanel;
+import com.sun.org.apache.xpath.internal.operations.Bool;
+
 import javax.swing.*;
 import java.awt.*;
+import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
@@ -9,7 +14,7 @@ import java.util.ArrayList;
  * @auther lrz
  * @time 2023/1/4 21:26
  */
-public class Chess implements com.lrz.Movable {
+public class Chess implements com.lrz.Movable , Serializable {
     private static final int SIZEX = 100;
     private static final int SIZEY = 50;
     private static final int MARGIN = 45;//边距
@@ -193,6 +198,81 @@ public class Chess implements com.lrz.Movable {
         }
         this.name = name;
         this.color = color;
+    }
+
+    public static Chess newChess(String name, String color){
+        switch (name) {
+            case "司令":
+                return new Siling(name, color);
+            case "军长":
+                return new JunZhang(name, color);
+            case "师长":
+                return new ShiZhang(name, color);
+            case "旅长":
+                return new LvZhang(name, color);
+            case "团长":
+                return new TuanZhang(name, color);
+            case "营长":
+                return new YingZhang(name, color);
+            case "连长":
+                return new LianZhang(name, color);
+            case "排长":
+                return new PaiZhang(name, color);
+            case "工兵":
+                return new GongBing(name, color);
+            case "炸弹":
+                return new ZhaDan(name, color);
+            case "地雷":
+                return new DiLei(name, color);
+            case "军旗":
+                return new JunQi(name, color);
+        }
+        return null;
+    }
+
+    public Chess(String name, String color, Point p, Boolean show) {
+        switch (name) {
+            case "司令":
+                this.level = 9;
+                break;
+            case "军长":
+                this.level = 8;
+                break;
+            case "师长":
+                this.level = 7;
+                break;
+            case "旅长":
+                this.level = 6;
+                break;
+            case "团长":
+                this.level = 5;
+                break;
+            case "营长":
+                this.level = 4;
+                break;
+            case "连长":
+                this.level = 3;
+                break;
+            case "排长":
+                this.level = 2;
+                break;
+            case "工兵":
+                this.level = 1;
+                break;
+            case "炸弹":
+                this.level = 10;
+                break;
+            case "地雷":
+                this.level = 0;
+                break;
+            case "军旗":
+                this.level = -1;
+                break;
+        }
+        this.name = name;
+        this.color = color;
+        this.p = p;
+        this.show = show;
     }
 
     public Chess(String name) {
@@ -808,7 +888,7 @@ public class Chess implements com.lrz.Movable {
      * @param myPanel
      * @return
      */
-    public boolean hasNoOtherChess(Point startP, Point endP, com.lrz.MyPanel myPanel) {
+    public boolean hasNoOtherChess(Point startP, Point endP, MyPanel myPanel) {
         int startX = (int) startP.getX();
         int startY = (int) startP.getY();
         int endX = (int) endP.getX();

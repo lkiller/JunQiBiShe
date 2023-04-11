@@ -15,7 +15,7 @@ import org.apache.ibatis.session.SqlSessionFactoryBuilder;
 
 import java.io.IOException;
 
-public class SqlSessionUtils {
+public class SqlSessionUtils{
     private  SqlSessionUtils(){}
     static SqlSessionFactory build = null;
     static{

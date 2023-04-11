@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="chess">
+    <update id="createTable" parameterType="String" statementType="STATEMENT">
+        create table ${tableName} (
+            `chessId` int not null primary key auto_increment,
+            `id` int,
+            `chessName` char(255),
+            `chessColor` char(255),
+            `chessPointX` int,
+            `chessPointY` int,
+            `chessShow` boolean,
+            foreign key (id) references t_save_num(id)
+        )
+    </update>
+
+    <select id="selectAllChess" resultType="com.lrz.pojo.saveChessList">
+        select * from ${tableName}
+    </select>
+    
+    <select id="selectLastFromTSaveNum" resultType="com.lrz.pojo.SaveNum">
+        select max(id) from t_save_num
+    </select>
+
+    <select id="selectAllFromTSaveNum" resultType="com.lrz.pojo.SaveNum">
+        select * from t_save_num
+    </select>
+
+    <select id="selectOneFromTSaveNumById" resultType="com.lrz.pojo.SaveNum">
+        select * from t_save_num where id = #{id}
+    </select>
+
+    <select id="selectAllFromT" resultType="com.lrz.pojo.saveChessList">
+        select * from ${tableName}
+    </select>
+
+    <insert id="insertToTSaveNum">
+        insert into t_save_num(id, `chessBoardName`, playTime, culPlayer, player) values (${id}, #{name}, #{timestamp}, #{culPlayer}, #{player})
+    </insert>
+
+    <insert id="insertChessList">
+        insert into ${tableName} (chessId, id, `chessName`, chessColor, chessPointX, chessPointY, chessShow)
+        values (null ,#{id}, #{chessName}, #{chessColor}, #{chessPointX}, #{chessPointY}, #{chessShow})
+    </insert>
+</mapper>

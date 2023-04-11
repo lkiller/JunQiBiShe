@@ -14,6 +14,10 @@ public class ZhaDan extends Chess implements Movable {
     public ZhaDan(String name, String color) {
         super("炸弹", color, 10);
     }
+    public ZhaDan(String name, String color, Point p, Boolean show) {
+        super("炸弹", color, p, show);
+        this.setLevel(10);
+    }
 
 
 }

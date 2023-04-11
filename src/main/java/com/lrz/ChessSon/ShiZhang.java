@@ -14,6 +14,9 @@ public class ShiZhang extends Chess implements Movable {
     public ShiZhang(String name, String color) {
         super("师长", color, 7);
     }
-
+    public ShiZhang(String name, String color, Point p, Boolean show) {
+        super("师长", color, p, show);
+        this.setLevel(7);
+    }
 
 }

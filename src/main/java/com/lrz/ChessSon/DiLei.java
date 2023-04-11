@@ -14,6 +14,10 @@ public class DiLei extends Chess implements Movable {
     public DiLei(String name, String color) {
         super("地雷", color, 0);
     }
+    public DiLei(String name, String color, Point p, Boolean show) {
+        super("地雷", color, p, show);
+        this.setLevel(0);
+    }
 
     @Override
     //地雷不可移动

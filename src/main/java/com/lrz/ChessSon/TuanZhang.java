@@ -14,6 +14,10 @@ public class TuanZhang extends Chess implements Movable {
     public TuanZhang(String name, String color) {
         super("团长", color, 5);
     }
+    public TuanZhang(String name, String color, Point p, Boolean show) {
+        super("团长", color, p, show);
+        this.setLevel(5);
+    }
 
 
 }

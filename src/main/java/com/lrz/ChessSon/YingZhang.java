@@ -14,6 +14,10 @@ public class YingZhang extends Chess implements Movable {
     public YingZhang(String name, String color) {
         super("营长", color, 4);
     }
+    public YingZhang(String name, String color, Point p, Boolean show) {
+        super("营长", color, p, show);
+        this.setLevel(4);
+    }
 
 
 }

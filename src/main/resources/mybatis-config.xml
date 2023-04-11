@@ -21,5 +21,6 @@
         <!--sql映射⽂件创建好之后，需要将该⽂件路径配置到这⾥-->
         <!--resource属性自动会从类的根路径下开始查找资源-->
         <mapper resource="HuiQiMapper.xml"/>
+        <mapper resource="addSaveChessBoardMapper.xml"/>
     </mappers>
 </configuration>

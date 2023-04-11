@@ -14,6 +14,9 @@ public class JunZhang extends Chess implements Movable {
     public JunZhang(String name, String color) {
         super("军长", color, 8);
     }
-
+    public JunZhang(String name, String color, Point p, Boolean show) {
+        super("军长", color, p, show);
+        this.setLevel(8);
+    }
 
 }

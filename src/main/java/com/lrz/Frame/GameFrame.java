@@ -1,22 +1,44 @@
 package com.lrz.Frame;
 
-import com.lrz.HintPanel;
-import com.lrz.MyPanel;
+import com.lrz.panel.HintPanel;
+import com.lrz.panel.MyPanel;
 
 import javax.swing.*;
 import java.awt.*;
+import java.net.Socket;
 
 /**
  * @version 1.0
  * @auther lrz
  * @time 2023/1/3 17:05
  */
-public class MainFrame extends JFrame {
+public class GameFrame extends JFrame {
+    boolean major;
     public MyPanel myPanel = null;
     int width = 1000,height = 1100;
     public HintPanel hintPanel = null;
-    public MainFrame(String title){
-        super(title);
+    private Socket socket;
+    private boolean isLocked = false;//锁定棋盘，即他人走时，当前棋盘不能走
+
+    public void setLocked(boolean locked) {
+        isLocked = locked;
+        myPanel.setLocked(locked);
+    }
+    public GameFrame(Socket socket, String title, boolean major){
+
+        this.setTitle(title);
+        this.setLayout(null);
+        MyPanel myPanel = new MyPanel(socket,this, major);
+        this.myPanel = myPanel;
+        HintPanel hintPanel = new HintPanel(this);
+        this.hintPanel = hintPanel;
+        this.add(myPanel);
+        myPanel.setBounds(0,0,800,1000);
+        this.add(hintPanel);
+        hintPanel.setBounds(800, 5, 150, 800);
+        //mainFrame.createFrame3();
+        this.setVisible(true);
+
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         Toolkit kit = Toolkit.getDefaultToolkit();
         Dimension screenSize = kit.getScreenSize();
@@ -131,18 +153,7 @@ public class MainFrame extends JFrame {
         this.setVisible(true);
     }*/
     public static void main(String[] args){
-        MainFrame mainFrame = new MainFrame("军棋");
-        mainFrame.setLayout(null);
-        MyPanel myPanel = new MyPanel(mainFrame);
-        mainFrame.myPanel = myPanel;
-        HintPanel hintPanel = new HintPanel(mainFrame);
-        mainFrame.hintPanel = hintPanel;
-        mainFrame.add(myPanel);
-        myPanel.setBounds(0,0,800,1000);
-        mainFrame.add(hintPanel);
-        hintPanel.setBounds(800, 5, 150, 800);
-        //mainFrame.createFrame3();
-        mainFrame.setVisible(true);
+      //   GameFrame gameFrame = new GameFrame("军棋");
 
     }
 

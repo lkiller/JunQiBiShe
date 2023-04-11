@@ -16,6 +16,8 @@ public class Siling extends Chess {
     public Siling(String name, String color) {
         super("司令", color, 9);
     }
-
-
+    public Siling(String name, String color, Point p, Boolean show) {
+        super("司令", color, p, show);
+        this.setLevel(9);
+    }
 }

@@ -14,6 +14,10 @@ public class LvZhang extends Chess implements Movable {
     public LvZhang(String name, String color) {
         super("旅长", color, 6);
     }
+    public LvZhang(String name, String color, Point p, Boolean show) {
+        super("旅长", color, p, show);
+        this.setLevel(6);
+    }
 
 
 }

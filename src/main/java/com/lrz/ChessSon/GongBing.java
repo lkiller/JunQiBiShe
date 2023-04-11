@@ -3,7 +3,7 @@ package com.lrz.ChessSon;
 import com.lrz.Chess;
 import com.lrz.Graph.ALGraph;
 import com.lrz.Movable;
-import com.lrz.MyPanel;
+import com.lrz.panel.MyPanel;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -17,6 +17,10 @@ public class GongBing extends Chess implements Movable {
     ALGraph alGraph;
     public GongBing(String name, String color) {
         super("工兵", color, 1);
+    }
+    public GongBing(String name, String color, Point p, Boolean show) {
+        super("工兵", color, p, show);
+        this.setLevel(1);
     }
 
     @Override
@@ -69,10 +73,15 @@ public class GongBing extends Chess implements Movable {
                 }
                 //第二行第三个
                 if (startP.getX() == 3) {
-                    //目标行营或者3、1
-                    if ((endP.getX() == 2 && endP.getY() == 3) || (endP.getX() == 3 && endP.getY() == 1) ||
-                    (endP.getX() == 4 && endP.getY() == 3))
+                    //目标在上下左右以及两个行营
+                    if (Math.abs(startP.getX() - endP.getX()) + Math.abs(startP.getY() - endP.getY()) == 1)
                         return true;
+                    if ((endP.getY() == 3 && endP.getX() == 2) || (endP.getY() == 3 && endP.getX() == 4)) {
+                        return true;
+                    }
+                    if (endP.getY() == 2) {
+                        return true;
+                    }
                     return isAtRail(endP);
                 }
                 //第二行第四个
@@ -108,10 +117,15 @@ public class GongBing extends Chess implements Movable {
                 }
                 //第十三行第三个
                 if (startP.getX() == 3) {
-                    //目标行营或者3、14
-                    if ((endP.getX() == 2 && endP.getY() == 12) || (endP.getX() == 4 && endP.getY() == 12) ||
-                            (endP.getX() == 3 && endP.getY() == 14))
+                    //目标在上下左右以及两个行营
+                    if (Math.abs(startP.getX() - endP.getX()) + Math.abs(startP.getY() - endP.getY()) == 1)
                         return true;
+                    if ((endP.getY() == 12 && endP.getX() == 2) || (endP.getY() == 12 && endP.getX() == 4)) {
+                        return true;
+                    }
+                    if (endP.getY() == 13) {
+                        return true;
+                    }
                     return isAtRail(endP);
                 }
                 //第十三行第四个
@@ -245,6 +259,9 @@ public class GongBing extends Chess implements Movable {
                     if((endP.getX() == 2 && endP.getY() == 5) || (endP.getX() == 4 && endP.getY() == 5) ){
                         return true;
                     }
+                    if(endP.getX() == 3 && endP.getY() ==5){
+                        return true;
+                    }
                     else return isAtRail(endP);
                 }
                 if(startP.getX() == 4){
@@ -276,6 +293,9 @@ public class GongBing extends Chess implements Movable {
                 }
                 if(startP.getX() == 3){
                     if((endP.getX() == 2 && endP.getY() == 10) || (endP.getX() == 4 && endP.getY() == 10) ){
+                        return true;
+                    }
+                    if(endP.getX() == 3 && endP.getY() == 10){
                         return true;
                     }
                     else return isAtRail(endP);
