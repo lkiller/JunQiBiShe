@@ -110,7 +110,7 @@ public class SelectFrame extends JFrame {
         setVisible(true);
         getClientList();
     }
-
+    ClientThread ct;
     /**
      * 得到所有登陆的用户
      */
@@ -119,7 +119,7 @@ public class SelectFrame extends JFrame {
         req.setType(Message.Type.LIST);
         req.setFrom(account);
         SocketUtil.send(socket, req);//发送请求过去
-        new ClientThread(socket, new ClientThread.ResponseListener() {
+        ct = new ClientThread(socket, new ClientThread.ResponseListener() {
             @Override
             public void success(Message resp) {//message为传回的信息
                 System.out.println("执行success");
@@ -132,25 +132,23 @@ public class SelectFrame extends JFrame {
                     jlist.validate();
                 }else if(resp.getType() == Message.Type.CHALLENGE_SUCCESS){
                     SelectFrame.this.dispose();//隐藏窗口
+                    ct.setShutDown(true);
+                    //到这里已经是发送挑战成功了，所以不需要再接收信息了
                     if(account.equals(resp.getFrom())){
-                        gameFrame1 = new GameFrame(socket, "军棋 当前账户为" + account, true);
+                        gameFrame1 = new GameFrame(socket, "军棋 当前账户为"+ account + "当前对手为" + resp.getTo(),account, resp.getTo());
+                        gameFrame1.myPanel.First_Send(resp.getTo());
                         gameFrame1.myPanel.setLocked(false);//发起者先走，被挑战者不能走
-                        try {
-                            Thread.sleep(500);
-                            First_Send(toSend);
-                        } catch (InterruptedException e) {
-                            throw new RuntimeException(e);
-                        }
-
                     }else{
-                        gameFrame2 = new GameFrame(socket, "军棋 当前账户为" + account, false);
+                        //最后一个参数是设置对手，设置成  服务器发过来的请求中的From的那个
+                        gameFrame2 = new GameFrame(socket, "军棋 当前账户为" + account + "当前对手为" + resp.getFrom(), account ,resp.getFrom());//
                         gameFrame2.myPanel.setLocked(true);
                     }
-                }else if(resp.getType() == Message.Type.REFRESH_OK){
-                    Second_Receive(resp);
-                }
+                }/*else if(resp.getType() == Message.Type.REFRESH_OK){
+                    //Second_Receive(resp);
+                }*/
             }
-        }).start();
+        });
+        ct.start();
     }
 
     private void Second_Receive(Message resp) {
@@ -160,7 +158,6 @@ public class SelectFrame extends JFrame {
             ArrayList<Chess> chessArrayList = (ArrayList<Chess>)content;
             gameFrame2.myPanel.reFresh(chessArrayList);
         }
-
     }
 
     /**

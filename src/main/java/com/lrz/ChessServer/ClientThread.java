@@ -17,6 +17,15 @@ import java.util.Vector;
 public class ClientThread extends Thread{
     private Socket socket;
     private ResponseListener L;
+    private boolean shutDown;
+
+    public void setShutDown(boolean shutDown) {
+        this.shutDown = shutDown;
+    }
+
+    public boolean isShutDown() {
+        return shutDown;
+    }
 
     public ClientThread(Socket socket, ResponseListener L){
         this.socket = socket;
@@ -28,9 +37,12 @@ public class ClientThread extends Thread{
 
     @Override//相当于代理模式，有点难
     public void run() {
-        while(true){
+        while(!shutDown){
             System.out.println("执行run");
             Object receive = SocketUtil.receive(socket);//接收服务端传回的信息
+            if(receive == null){
+                continue;
+            }
             //System.out.println("服务端传回的信息：" + receive);
             if(receive instanceof Message){
                 Message resp = (Message) receive;

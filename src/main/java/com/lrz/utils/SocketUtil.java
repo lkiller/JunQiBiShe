@@ -54,13 +54,13 @@ public class SocketUtil {
         InputStream inputStream = null;
         ObjectInputStream ois = null;
         try {
-            inputStream = s.getInputStream();
-            ois = new ObjectInputStream(inputStream);
-            return ois.readObject();
-        } catch (IOException e) {
+            if(s != null) {
+                inputStream = s.getInputStream();
+                ois = new ObjectInputStream(inputStream);
+                return ois.readObject();
+            }
+        } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
-        } catch (ClassNotFoundException e) {
-            throw new RuntimeException(e);
         }
 
         return null;

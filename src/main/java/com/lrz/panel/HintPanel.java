@@ -28,11 +28,13 @@ public class HintPanel extends JPanel implements ActionListener {
     SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     public JTextArea jTextArea = null;
     public GameFrame gameFrame = null;
+    JPanel nextPlayer;
     JLabel colorLabel = new JLabel("翻棋以确定阵营");
     public JLabel j1 = null;
     public JLabel j2 = null;
     public JLabel j3 = null;
     public JLabel j4 = null;
+    public JLabel j5 = null;
     public JLabel redDiLei = null;
     public JLabel blueDiLei = null;
     String culPlayerColor = null;
@@ -52,6 +54,7 @@ public class HintPanel extends JPanel implements ActionListener {
         j2 = new JLabel();
         j3 = new JLabel();
         j4 = new JLabel();
+        j5 = new JLabel();
         redDiLei = new JLabel();
         blueDiLei = new JLabel();
         this.setLayout(null);
@@ -61,12 +64,13 @@ public class HintPanel extends JPanel implements ActionListener {
         JButton impt = new JButton("导入");
         JButton getFail = new JButton("认输");
 
-        JPanel nextPlayer = new JPanel();
+        nextPlayer = new JPanel();
         nextPlayer.setBounds(0, 40, 120, 30);
         j1.setBounds(0,350,120,30);
         j2.setBounds(0,400,120,30);
         j3.setBounds(0,450,120,30);
         j4.setBounds(0,500,120,30);
+        j5.setBounds(0,550,120,30);
         redDiLei.setBounds(0,600,120,30);
         blueDiLei.setBounds(0,650,120,30);
 
@@ -99,6 +103,7 @@ public class HintPanel extends JPanel implements ActionListener {
         this.add(j2);
         this.add(j3);
         this.add(j4);
+        this.add(j5);
         this.add(redDiLei);
         this.add(blueDiLei);
         this.add(nextPlayer);

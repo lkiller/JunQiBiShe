@@ -89,12 +89,18 @@ public class Message implements Serializable {
         CHALLENGE,//挑战
         CHALLENGE_SUCCESS,//发送挑战请求成功
         MOVE,//移动
+        TURN_OVER,//翻棋
         EAT,//吃子
+        EAT_ZHA,//炸弹炸
+        EAT_TOGETHER,//同归于尽
         PEACE,//求和
         DEFEAT,//认输
         SUCCESS,//发送成功
         FAILURE,//发送失败
         REFRESH,//刷新棋谱
-        REFRESH_OK//刷新棋谱
+        REFRESH_OK,//刷新棋谱
+        CONFIRM_NO_1,//表示player1发送的还确认没有阵营
+        CONFIRM_NO_8,//表示还没有阵营，不过是8
+        CONFIRM_OK//确定阵营成功
     }
 }

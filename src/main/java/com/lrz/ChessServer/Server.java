@@ -8,8 +8,6 @@
  */
 package com.lrz.ChessServer;
 
-import com.lrz.Chess;
-import com.lrz.ChessSon.*;
 import com.lrz.pojo.Message;
 import com.lrz.utils.SocketUtil;
 
@@ -86,8 +84,13 @@ public class Server {
                             fight(request);
                             break;
                         case MOVE:
+                            move(request);
+                            break;
+                        case TURN_OVER:
+                            turn_over(request);
                             break;
                         case EAT:
+                            eat(request);
                             break;
                         case PEACE:
                             break;
@@ -96,12 +99,115 @@ public class Server {
                         case REFRESH:
                             refresh(request);
                             break;
+                        case EAT_ZHA:
+                            zha(request);
+                            break;
+                        case EAT_TOGETHER:
+                            together(request);
+                            break;
+                        case CONFIRM_NO_1:
+                            confirm_no_1(request);
+                            break;
+                        case CONFIRM_NO_8:
+                            confirm_no_8(request);
+                            break;
+                        case CONFIRM_OK:
+                            confirm_ok(request);
+                            break;
+
                     }
                 }
 
             }
         }
 
+        private void confirm_ok(Message req) {
+            String to  = req.getTo();
+            ServerThread socketThreadTo = clients.get(to);
+            Message resp = new Message();//响应消息
+            resp.setContent(req.getContent());
+            resp.setType(Message.Type.CONFIRM_OK);
+            resp.setFrom(req.getFrom());
+            resp.setTo(req.getTo());
+            SocketUtil.send(socketThreadTo.getSocket(), resp);
+        }
+
+        private void confirm_no_1(Message req) {
+            String to  = req.getTo();
+            ServerThread socketThreadTo = clients.get(to);
+            Message resp = new Message();//响应消息
+            resp.setContent(req.getContent());
+            resp.setType(Message.Type.CONFIRM_NO_1);
+            resp.setFrom(req.getFrom());
+            resp.setTo(req.getTo());
+            SocketUtil.send(socketThreadTo.getSocket(), resp);
+        }
+        private void confirm_no_8(Message req) {
+            String to  = req.getTo();
+            ServerThread socketThreadTo = clients.get(to);
+            Message resp = new Message();//响应消息
+            resp.setContent(req.getContent());
+            resp.setType(Message.Type.CONFIRM_NO_8);
+            resp.setFrom(req.getFrom());
+            resp.setTo(req.getTo());
+            SocketUtil.send(socketThreadTo.getSocket(), resp);
+        }
+
+        private void together(Message req) {
+            String to  = req.getTo();
+            ServerThread socketThreadTo = clients.get(to);
+            Message resp = new Message();//响应消息
+            resp.setContent(req.getContent());
+            resp.setType(Message.Type.EAT_TOGETHER);
+            resp.setFrom(req.getFrom());
+            resp.setTo(req.getTo());
+            SocketUtil.send(socketThreadTo.getSocket(), resp);
+        }
+
+        private void zha(Message req) {
+            String to  = req.getTo();
+            ServerThread socketThreadTo = clients.get(to);
+            Message resp = new Message();//响应消息
+            resp.setContent(req.getContent());
+            resp.setType(Message.Type.EAT_ZHA);
+            resp.setFrom(req.getFrom());
+            resp.setTo(req.getTo());
+            SocketUtil.send(socketThreadTo.getSocket(), resp);
+        }
+
+        private void eat(Message req) {
+            String to  = req.getTo();
+            ServerThread socketThreadTo = clients.get(to);
+            Message resp = new Message();//响应消息
+            resp.setContent(req.getContent());
+            resp.setType(Message.Type.EAT);
+            resp.setFrom(req.getFrom());
+            resp.setTo(req.getTo());
+            SocketUtil.send(socketThreadTo.getSocket(), resp);
+        }
+
+        private void turn_over(Message req) {
+            String to  = req.getTo();
+            ServerThread socketThreadTo = clients.get(to);
+            Message resp = new Message();//响应消息
+            resp.setContent(req.getContent());
+            resp.setType(Message.Type.TURN_OVER);
+            resp.setFrom(req.getFrom());
+            resp.setTo(req.getTo());
+            SocketUtil.send(socketThreadTo.getSocket(), resp);
+        }
+
+        private void move(Message req) {
+            String from = req.getFrom();
+            String to  = req.getTo();
+            ServerThread socketThreadTo = clients.get(to);
+            Message resp = new Message();//响应消息
+            resp.setContent(req.getContent());
+            resp.setType(Message.Type.MOVE);
+            resp.setFrom(req.getFrom());
+            resp.setTo(req.getTo());
+            SocketUtil.send(socketThreadTo.getSocket(), resp);
+        }
 
 
         private void Login(Message message) {

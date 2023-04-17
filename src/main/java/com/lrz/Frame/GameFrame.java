@@ -13,6 +13,8 @@ import java.net.Socket;
  * @time 2023/1/3 17:05
  */
 public class GameFrame extends JFrame {
+    public String opponent;//对手名称
+    public String account;//当前账户
     boolean major;
     public MyPanel myPanel = null;
     int width = 1000,height = 1100;
@@ -20,15 +22,27 @@ public class GameFrame extends JFrame {
     private Socket socket;
     private boolean isLocked = false;//锁定棋盘，即他人走时，当前棋盘不能走
 
+    public void setOpponent(String opponent) {
+        this.opponent = opponent;
+    }
+
+    public void setSocket(Socket socket) {
+        this.socket = socket;
+    }
+
     public void setLocked(boolean locked) {
         isLocked = locked;
         myPanel.setLocked(locked);
     }
-    public GameFrame(Socket socket, String title, boolean major){
-
+    public GameFrame(Socket socket, String title, String account, String opponent){
+        this.account = account;
+        this.opponent = opponent;
+        this.socket = socket;
         this.setTitle(title);
         this.setLayout(null);
-        MyPanel myPanel = new MyPanel(socket,this, major);
+        MyPanel myPanel = new MyPanel(socket,this);
+        myPanel.setSocket(socket);
+        myPanel.setOpponent(opponent);
         this.myPanel = myPanel;
         HintPanel hintPanel = new HintPanel(this);
         this.hintPanel = hintPanel;

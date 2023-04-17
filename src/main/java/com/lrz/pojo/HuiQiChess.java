@@ -12,8 +12,9 @@ import com.lrz.Chess;
 import com.sun.org.apache.xpath.internal.operations.Bool;
 
 import java.awt.*;
+import java.io.Serializable;
 
-public class HuiQiChess {
+public class HuiQiChess implements Serializable {
     private int step;
     private String player;//阵营
     private Point startP;

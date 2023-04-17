@@ -2,13 +2,15 @@ package com.lrz.Graph;
 
 import javafx.scene.shape.Arc;
 
+import java.io.Serializable;
+
 /**
  * 顶点表节点
  * @version 1.0
  * @auther lrz
  * @time 2023/1/10 20:37
  */
-public class VNode {
+public class VNode implements Serializable {
     ArcNode first = null;
     int id;
 

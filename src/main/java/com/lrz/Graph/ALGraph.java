@@ -4,6 +4,7 @@ import com.lrz.Queue.MyQueue;
 import javafx.scene.shape.Arc;
 import org.junit.Test;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Queue;
 
@@ -13,7 +14,7 @@ import java.util.Queue;
  * @auther lrz
  * @time 2023/1/10 20:38
  */
-public class ALGraph {
+public class ALGraph implements Serializable {
     int vNum = 32;//顶点个数
     int nowNum = 32;
     int eNum;//边个数
