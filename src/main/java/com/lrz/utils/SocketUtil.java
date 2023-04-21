@@ -56,13 +56,15 @@ public class SocketUtil {
         try {
             if(s != null) {
                 inputStream = s.getInputStream();
-                ois = new ObjectInputStream(inputStream);
-                return ois.readObject();
+                System.out.println(s);
+                if(inputStream !=null && !s.isClosed()){
+                    ois = new ObjectInputStream(inputStream);
+                    return ois.readObject();
+                }
             }
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
         }
-
         return null;
     }
 

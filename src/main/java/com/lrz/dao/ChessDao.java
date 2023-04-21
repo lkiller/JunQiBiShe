@@ -8,10 +8,9 @@
  */
 package com.lrz.dao;
 
-import com.lrz.Chess;
+import com.lrz.pojo.Chess;
 import com.lrz.pojo.HuiQiChess;
 import com.lrz.utils.SqlSessionUtils;
-import org.apache.ibatis.session.ResultHandler;
 import org.apache.ibatis.session.SqlSession;
 
 public class ChessDao implements ChessImpl{

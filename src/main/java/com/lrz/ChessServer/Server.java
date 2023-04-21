@@ -66,6 +66,11 @@ public class Server {
             while (true) {
                 //System.out.println(1);
                 Object receive = SocketUtil.receive(socket);
+                try {
+                    socket.sendUrgentData(0);
+                } catch (IOException e) {
+                    break;    //如果抛出了异常，那么就是断开连接了  跳出无限循环
+                }
                 //System.out.println(receive);
                 if (receive instanceof Message) {
                     Message request = (Message) receive;//向服务器发送请求消息
@@ -114,11 +119,50 @@ public class Server {
                         case CONFIRM_OK:
                             confirm_ok(request);
                             break;
-
+                        case HUIQI:
+                            huiQi_Server(request);
+                            break;
+                        case HUIQI_OK:
+                            huiQi_OK(request);
+                            break;
+                        case HUIQI_NO:
+                            huiQi_No(request);
+                            break;
                     }
                 }
 
             }
+        }
+
+        private void huiQi_Server(Message req) {
+            String to  = req.getTo();
+            ServerThread socketThreadTo = clients.get(to);
+            Message resp = new Message();//响应消息
+            resp.setContent(req.getContent());
+            resp.setType(Message.Type.HUIQI);
+            resp.setFrom(req.getFrom());
+            resp.setTo(req.getTo());
+            SocketUtil.send(socketThreadTo.getSocket(), resp);
+        }
+        private void huiQi_No(Message req) {
+            String to  = req.getTo();
+            ServerThread socketThreadTo = clients.get(to);
+            Message resp = new Message();//响应消息
+            resp.setContent(req.getContent());
+            resp.setType(Message.Type.HUIQI_NO);
+            resp.setFrom(req.getFrom());
+            resp.setTo(req.getTo());
+            SocketUtil.send(socketThreadTo.getSocket(), resp);
+        }
+        private void huiQi_OK(Message req) {
+            String to  = req.getTo();
+            ServerThread socketThreadTo = clients.get(to);
+            Message resp = new Message();//响应消息
+            resp.setContent(req.getContent());
+            resp.setType(Message.Type.HUIQI_OK);
+            resp.setFrom(req.getFrom());
+            resp.setTo(req.getTo());
+            SocketUtil.send(socketThreadTo.getSocket(), resp);
         }
 
         private void confirm_ok(Message req) {

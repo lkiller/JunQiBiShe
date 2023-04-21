@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="account">
+    <update id="createTable_account" parameterType="String" statementType="STATEMENT">
+        create table  IF NOT EXISTS `playerAccount`(
+                                      `accountId` int not null primary key auto_increment,
+                                      `account` char(255),
+                                      `password` char(255)
+        )
+    </update>
+
+    <select id="isExistAccount" resultType="com.lrz.pojo.PlayerAccount">
+        select * from playerAccount where account=#{account}
+    </select>
+
+    <insert id="insertAccount">
+        insert into `playerAccount` (accountId, account, password)
+        values (null ,#{account}, #{password})
+    </insert>
+</mapper>

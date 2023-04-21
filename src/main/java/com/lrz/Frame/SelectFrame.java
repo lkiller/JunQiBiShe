@@ -8,7 +8,7 @@
  */
 package com.lrz.Frame;
 
-import com.lrz.Chess;
+import com.lrz.pojo.Chess;
 import com.lrz.ChessServer.ClientThread;
 import com.lrz.ChessSon.*;
 import com.lrz.pojo.Message;
@@ -20,8 +20,6 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.net.Socket;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 import java.util.Vector;
 
 public class SelectFrame extends JFrame {

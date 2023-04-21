@@ -8,7 +8,7 @@
  */
 package com.lrz.panel;
 
-import com.lrz.Chess;
+import com.lrz.pojo.Chess;
 import com.lrz.Frame.importFrame;
 import com.lrz.Frame.GameFrame;
 import com.lrz.pojo.saveChessList;
@@ -115,12 +115,18 @@ public class HintPanel extends JPanel implements ActionListener {
         String actionCommand = e.getActionCommand();
         switch (actionCommand){
             case "huiQi":
-                int tips = JOptionPane.showConfirmDialog(null, "落子无悔，您确认悔棋吗","提示",  JOptionPane.YES_NO_OPTION);
-                if(tips == 0){
-                    gameFrame.myPanel.huiQi();
-                    System.out.println("悔棋被点击");
+                if(!gameFrame.myPanel.isLocked()){
+                    gameFrame.myPanel.hint("只可在本回合悔棋", "", "", "", "");
+                    break;
+                }else{
+                    int tips = JOptionPane.showConfirmDialog(null, "落子无悔，您确认悔棋吗","提示",  JOptionPane.YES_NO_OPTION);
+                    if(tips == 0){
+                        gameFrame.myPanel.huiQi(false,false);
+                        System.out.println("悔棋被点击，我开始调用自己的huiQi方法");
+                        break;
+                    }
                 }
-                break;
+
             case "save":
                 System.out.println("保存被点击");
                 String chessBoardName = JOptionPane.showInputDialog("请输入该棋局名称",JOptionPane.YES_NO_OPTION);

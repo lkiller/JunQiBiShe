@@ -8,9 +8,6 @@
  */
 package com.lrz.pojo;
 
-import com.lrz.Chess;
-import com.sun.org.apache.xpath.internal.operations.Bool;
-
 import java.awt.*;
 import java.io.Serializable;
 

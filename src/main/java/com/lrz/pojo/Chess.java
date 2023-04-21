@@ -1,8 +1,7 @@
-package com.lrz;
+package com.lrz.pojo;
 
 import com.lrz.ChessSon.*;
 import com.lrz.panel.MyPanel;
-import com.sun.org.apache.xpath.internal.operations.Bool;
 
 import javax.swing.*;
 import java.awt.*;

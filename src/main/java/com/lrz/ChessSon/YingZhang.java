@@ -1,7 +1,7 @@
 package com.lrz.ChessSon;
 
 import com.lrz.Movable;
-import com.lrz.Chess;
+import com.lrz.pojo.Chess;
 
 import java.awt.*;
 

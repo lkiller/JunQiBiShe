@@ -22,5 +22,6 @@
         <!--resource属性自动会从类的根路径下开始查找资源-->
         <mapper resource="HuiQiMapper.xml"/>
         <mapper resource="addSaveChessBoardMapper.xml"/>
+        <mapper resource="playerAccountMapper.xml"/>
     </mappers>
 </configuration>

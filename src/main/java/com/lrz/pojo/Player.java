@@ -1,4 +1,4 @@
-package com.lrz;
+package com.lrz.pojo;
 
 import java.io.Serializable;
 

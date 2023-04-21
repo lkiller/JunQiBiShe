@@ -101,6 +101,11 @@ public class Message implements Serializable {
         REFRESH_OK,//刷新棋谱
         CONFIRM_NO_1,//表示player1发送的还确认没有阵营
         CONFIRM_NO_8,//表示还没有阵营，不过是8
-        CONFIRM_OK//确定阵营成功
+        CONFIRM_OK,//确定阵营成功
+        HUIQI,//开始悔棋
+        HUIQI_CONFIRM,//请求悔棋
+        HUIQI_OK,//同意悔棋
+        HUIQI_NO//不同意悔棋
+
     }
 }

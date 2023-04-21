@@ -9,8 +9,11 @@
 package com.lrz.Frame;
 
 import com.lrz.pojo.Message;
+import com.lrz.pojo.PlayerAccount;
 import com.lrz.pojo.User;
 import com.lrz.utils.SocketUtil;
+import com.lrz.utils.SqlSessionUtils;
+import org.apache.ibatis.session.SqlSession;
 
 import javax.swing.*;
 import java.awt.*;
@@ -86,6 +89,7 @@ public class LoginFrame extends JFrame implements ActionListener {
                 break;
 
             case "register":
+                System.out.println("你点击了注册按钮");
                 this.register();
                 break;
         }
@@ -100,29 +104,44 @@ public class LoginFrame extends JFrame implements ActionListener {
         String accountStr = account.getText();
         char[] password1 = password.getPassword();
         String passwordStr = new String(password1);
-        //发送这个到服务器
-        User user = new User(accountStr, passwordStr);
-
-        if(socket == null){
-           socket = SocketUtil.createLocalHost(9988);
+        SqlSession sqlSession = SqlSessionUtils.openSession();
+        PlayerAccount playerAccount = new PlayerAccount(accountStr, passwordStr);
+        PlayerAccount isExistAccount = sqlSession.selectOne("isExistAccount", playerAccount);
+        if(playerAccount == null){
+            JOptionPane.showMessageDialog(null, "暂未查询到该用户名");
         }
-        Message request = new Message();
-        request.setType(Message.Type.LOGIN);//设置消息的类型
-        request.setContent(user);//设置消息的内容
-        request.setFrom(accountStr);
-        //发送登陆请求
-        SocketUtil.send(socket, request);
-        //接收服务器的响应信息
-        Object response = SocketUtil.receive(socket);
-        //System.out.println(response);
-        if(response instanceof Message){
-            Message resp = (Message) response;
-            if(resp.getType() == Message.Type.SUCCESS){
-                //说明登陆成功，跳转到游戏大厅，并隐藏登陆界面
-                LoginFrame.this.dispose();
-                new SelectFrame(socket, accountStr);
+        else if(isExistAccount.getAccount().equals(playerAccount.getAccount()) && isExistAccount.getPassword().equals(playerAccount.getPassword())){
+            //发送这个到服务器
+            User user = new User(accountStr, passwordStr);
+
+            if(socket == null){
+                socket = SocketUtil.createLocalHost(9988);
+            }
+            Message request = new Message();
+            request.setType(Message.Type.LOGIN);//设置消息的类型
+            request.setContent(user);//设置消息的内容
+            request.setFrom(accountStr);
+            //发送登陆请求
+            SocketUtil.send(socket, request);
+            //接收服务器的响应信息
+            Object response = SocketUtil.receive(socket);
+            //System.out.println(response);
+            if(response instanceof Message){
+                Message resp = (Message) response;
+                if(resp.getType() == Message.Type.SUCCESS){
+                    //说明登陆成功，跳转到游戏大厅，并隐藏登陆界面
+                    LoginFrame.this.dispose();
+                    new SelectFrame(socket, accountStr);
+                }
             }
         }
+        else{
+            JOptionPane.showMessageDialog(null, "密码错误");
+        }
+
+
     }
-    private void register(){}
+    private void register(){
+        new RegisterFrame();
+    }
 }

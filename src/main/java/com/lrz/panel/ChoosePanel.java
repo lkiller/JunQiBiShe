@@ -8,7 +8,7 @@
  */
 package com.lrz.panel;
 
-import com.lrz.Chess;
+import com.lrz.pojo.Chess;
 import com.lrz.ChessSon.*;
 import com.lrz.Frame.GameFrame;
 import com.lrz.pojo.SaveNum;
@@ -68,7 +68,7 @@ public class ChoosePanel extends JPanel {
                     new Point(chessL.getChessPointX(), chessL.getChessPointY()), chessL.isChessShow()));*/
         }
         gameFrame.myPanel.culPlayer.setColor(culColor);
-        gameFrame.hintPanel.colorLabel.setText("该" + culColor + "玩家走了");
+        //gameFrame.hintPanel.colorLabel.setText("该" + culColor + "玩家走了");
         if(table.getPlayer() == 1){
             if("红".equals(culColor)){
                 gameFrame.myPanel.player1.setColor(culColor);

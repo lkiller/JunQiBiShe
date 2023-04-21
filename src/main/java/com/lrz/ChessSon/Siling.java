@@ -1,8 +1,6 @@
 package com.lrz.ChessSon;
 
-import com.lrz.Chess;
-import com.lrz.Movable;
-import sun.util.resources.cldr.si.CalendarData_si_LK;
+import com.lrz.pojo.Chess;
 
 import java.awt.*;
 
